@@ -1,0 +1,87 @@
+/* You can add global styles to this file, and also import other style files */
+
+@import 'tailwindcss';
+@import '@spartan-ng/brain/hlm-tailwind-preset.css';
+
+/* Light theme (default) */
+:root {
+  --radius: 0.625rem;
+  --landing-bg: #fafafa;
+  --landing-fg: #171717;
+  --landing-muted: #525252;
+  --landing-muted-light: #737373;
+  --landing-border: #e5e5e5;
+  --landing-border-hover: #d4d4d4;
+  --landing-card-bg: #fff;
+  --landing-card-hover: #f5f5f5;
+  --nav-bg: #fff;
+  --nav-fg: #171717;
+  --nav-muted: #404040;
+  --nav-trigger-bg: #f5f5f5;
+  --nav-trigger-hover: #e5e5e5;
+  --btn-primary-bg: #171717;
+  --btn-primary-fg: #fafafa;
+  --btn-secondary-bg: #f5f5f5;
+  --accent: #f97316;
+  --banner-bg: #171717;
+  --banner-fg: #fafafa;
+  --spartan: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+}
+
+/* Dark theme */
+.dark {
+  --landing-bg: #0a0a0a;
+  --landing-fg: #fafafa;
+  --landing-muted: #a3a3a3;
+  --landing-muted-light: #737373;
+  --landing-border: rgba(255, 255, 255, 0.1);
+  --landing-border-hover: rgba(255, 255, 255, 0.15);
+  --landing-card-bg: rgba(255, 255, 255, 0.03);
+  --landing-card-hover: rgba(255, 255, 255, 0.06);
+  --nav-bg: rgba(10, 10, 10, 0.8);
+  --nav-fg: #fafafa;
+  --nav-muted: rgba(255, 255, 255, 0.8);
+  --nav-trigger-bg: rgba(255, 255, 255, 0.08);
+  --nav-trigger-hover: rgba(255, 255, 255, 0.12);
+  --btn-primary-bg: #fff;
+  --btn-primary-fg: #0a0a0a;
+  --btn-secondary-bg: rgba(255, 255, 255, 0.1);
+  --accent: #fb923c;
+  --banner-bg: #171717;
+  --banner-fg: #fafafa;
+  /* Spartan dropdown/popover - required for navbar dropdowns in dark mode */
+  --popover: oklch(0.18 0 0);
+  --popover-foreground: oklch(0.98 0 0);
+  --accent-foreground: oklch(0.98 0 0);
+  --muted-foreground: oklch(0.65 0 0);
+}
+
+/* Remove white border from spartan navigation menu dropdowns */
+[data-slot='navigation-menu-content'],
+hlm-navigation-menu-content {
+  border: none !important;
+}
+
+/* Force dark mode on navbar dropdowns when .dark is active (overlay inherits from html) */
+.dark [data-slot='navigation-menu-content'],
+.dark hlm-navigation-menu-content {
+  background: var(--popover) !important;
+  color: var(--popover-foreground) !important;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}

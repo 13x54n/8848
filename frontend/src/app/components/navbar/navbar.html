@@ -1,0 +1,109 @@
+<div class="navbar">
+  <a href="/" class="logo">
+    <img src="https://avatars.githubusercontent.com/u/179059125?s=200&v=4" alt="Logo" class="logo-icon" />
+    <span>Ming Open Web HQ</span>
+  </a>
+  <nav hlmNavigationMenu class="nav-menu">
+    <ul hlmNavigationMenuList class="nav-list">
+      <li hlmNavigationMenuItem>
+        <button hlmNavigationMenuTrigger>
+          Product
+          <ng-icon
+            name="lucideChevronDown"
+            class="chevron-icon"
+          />
+        </button>
+        <hlm-navigation-menu-content *hlmNavigationMenuPortal>
+          <ul class="dropdown-grid">
+            @for (item of productItems; track item.title) {
+              <li>
+                <a hlmNavigationMenuLink [href]="item.href">
+                  <div class="dropdown-item-content">
+                    <div class="dropdown-title">{{ item.title }}</div>
+                    <div class="dropdown-desc">{{ item.description }}</div>
+                  </div>
+                </a>
+              </li>
+            }
+          </ul>
+        </hlm-navigation-menu-content>
+      </li>
+
+      <li hlmNavigationMenuItem>
+        <button hlmNavigationMenuTrigger>
+          Solutions
+          <ng-icon
+            name="lucideChevronDown"
+            class="chevron-icon"
+          />
+        </button>
+        <hlm-navigation-menu-content *hlmNavigationMenuPortal>
+          <ul class="dropdown-grid">
+            @for (item of solutionsItems; track item.title) {
+              <li>
+                <a hlmNavigationMenuLink [href]="item.href">
+                  <div class="dropdown-item-content">
+                    <div class="dropdown-title">{{ item.title }}</div>
+                    <div class="dropdown-desc">{{ item.description }}</div>
+                  </div>
+                </a>
+              </li>
+            }
+          </ul>
+        </hlm-navigation-menu-content>
+      </li>
+
+      <li hlmNavigationMenuItem>
+        <button hlmNavigationMenuTrigger>
+          Resources
+          <ng-icon
+            name="lucideChevronDown"
+            class="chevron-icon"
+          />
+        </button>
+        <hlm-navigation-menu-content *hlmNavigationMenuPortal>
+          <ul class="dropdown-simple">
+            <li>
+              <a hlmNavigationMenuLink href="#" class="flex-row items-center gap-2">
+                <ng-icon name="lucideInfo" />
+                Documentation
+              </a>
+            </li>
+            <li>
+              <a hlmNavigationMenuLink href="#" class="flex-row items-center gap-2">
+                <ng-icon name="lucideCircle" />
+                Blog
+              </a>
+            </li>
+            <li>
+              <a hlmNavigationMenuLink href="#" class="flex-row items-center gap-2">
+                <ng-icon name="lucideCheck" />
+                Support
+              </a>
+            </li>
+          </ul>
+        </hlm-navigation-menu-content>
+      </li>
+
+      <li hlmNavigationMenuItem>
+        <a hlmNavigationMenuLink routerLink="/pricing">Pricing</a>
+      </li>
+    </ul>
+  </nav>
+  <div class="nav-actions">
+    <button
+      type="button"
+      class="theme-toggle"
+      (click)="themeService.toggle()"
+      [attr.aria-label]="themeService.isDark() ? 'Switch to light mode' : 'Switch to dark mode'"
+    >
+      @if (themeService.isDark()) {
+        <ng-icon name="lucideSun" class="theme-icon" />
+      } @else {
+        <ng-icon name="lucideMoon" class="theme-icon" />
+      }
+    </button>
+    <a routerLink="/login" class="nav-login">Log in</a>
+    <a routerLink="/signup" class="nav-cta">Sign up</a>
+  </div>
+</div>

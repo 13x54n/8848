@@ -1,0 +1,144 @@
+<div class="landing">
+  <app-navbar></app-navbar>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <p class="hero-tagline">Ming Open Web HQ 2026 — AI, Cloud, and more.</p>
+    <h1 class="hero-title">
+      Build faster with AI,<br/> Ship <span class="accent">10x</span> with us.
+    </h1>
+    <p class="hero-subtitle">
+      CloudDeploy is easy to adopt and comes with versatile caching features to support high traffic
+      websites while uncovering new opportunities.
+    </p>
+    <div class="hero-cta">
+      <a href="#" class="btn btn-primary">View Next.js Demo</a>
+      <a href="#" class="btn btn-ghost">Request a Demo <span class="arrow">→</span></a>
+    </div>
+  </section>
+
+  <!-- Deploy CTA + Templates Section -->
+  <section class="deploy-section">
+    <div class="deploy-content">
+      <div class="deploy-right">
+        <div class="template-grid">
+          @for (template of templates; track template.name) {
+            <a [href]="template.href" class="template-card">
+              <span class="template-corner"></span>
+              <div class="template-logo">
+                <img [src]="getLogo(template)" [alt]="template.name" />
+              </div>
+              <span class="template-label">{{ template.name }} Templates</span>
+            </a>
+          }
+        </div>
+      </div>
+      <div class="deploy-left">
+        <h2 class="deploy-title">
+          Deploy your first app. <br />
+          In seconds...
+        </h2>
+        <ul class="deploy-features">
+          <li class="deploy-feature">
+            <span class="deploy-feature-icons">
+              <img src="https://cdn.simpleicons.org/github/171515" alt="" class="deploy-icon" />
+              <img src="https://cdn.simpleicons.org/gitlab/fc6d26" alt="" class="deploy-icon" />
+              <svg
+                class="deploy-icon"
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <rect x="4" y="4" width="16" height="16" rx="2" />
+                <path d="M9 9h6M9 13h6M9 17h4" />
+              </svg>
+            </span>
+            <span>Deploy automatically from git or with our CLI</span>
+          </li>
+          <li class="deploy-feature">
+            <svg
+              class="deploy-feature-icon"
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <rect x="2" y="3" width="20" height="14" rx="2" />
+              <path d="M8 21h8M12 17v4" />
+            </svg>
+            <span>Wide range support for the most popular frameworks</span>
+          </li>
+          <li class="deploy-feature">
+            <svg
+              class="deploy-feature-icon"
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+              <circle cx="12" cy="12" r="3" />
+            </svg>
+            <span>Previews for every push</span>
+          </li>
+          <li class="deploy-feature">
+            <svg
+              class="deploy-feature-icon"
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <rect x="3" y="11" width="18" height="11" rx="2" />
+              <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+            </svg>
+            <span>Automatic HTTPS for all your domains</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-grid">
+      <div class="footer-col">
+        <h4>Product</h4>
+        <a href="#">Features</a>
+        <a href="#">Templates</a>
+        <a href="#">Integrations</a>
+        <a href="#">Pricing</a>
+      </div>
+      <div class="footer-col">
+        <h4>Resources</h4>
+        <a href="#">Documentation</a>
+        <a href="#">Blog</a>
+        <a href="#">Support</a>
+        <a href="#">Status</a>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <a href="#">About</a>
+        <a href="#">Careers</a>
+        <a href="#">Contact</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2025 CloudDeploy. All rights reserved.</span>
+    </div>
+  </footer>
+</div>

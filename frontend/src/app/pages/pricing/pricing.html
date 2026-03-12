@@ -1,0 +1,160 @@
+<div class="pricing-page">
+  <div class="announcement-banner">
+    Limited-Time Offer: Get Up to 30% Off on Cloud Deployments — Book Your Free Consultation Today!
+  </div>
+  <app-navbar></app-navbar>
+
+  <main class="pricing-main">
+    <header class="pricing-header">
+      <h1 class="pricing-title">Find a plan to power your apps.</h1>
+      <p class="pricing-subtitle">
+        CloudDeploy supports teams of all sizes, with pricing that scales.
+      </p>
+    </header>
+
+    <div class="pricing-grid">
+      @for (plan of plans; track plan.name) {
+        <div class="pricing-card" [class.pricing-card-popular]="plan.popular">
+          @if (plan.popular) {
+            <span class="pricing-badge">Popular</span>
+          }
+          <h2 class="plan-name">{{ plan.name }}</h2>
+          <p class="plan-description">{{ plan.description }}</p>
+          <div class="plan-price">
+            <span class="price-value">{{ plan.price }}</span>
+            @if (plan.priceNote) {
+              <span class="price-note">{{ plan.priceNote }}</span>
+            }
+          </div>
+          <ul class="plan-features">
+            @for (feature of plan.features; track feature) {
+              <li class="plan-feature">
+                <svg class="feature-check" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M20 6 9 17l-5-5"/>
+                </svg>
+                {{ feature }}
+              </li>
+            }
+          </ul>
+          <div class="plan-cta">
+            <a routerLink="/" class="btn" [class.btn-primary]="plan.ctaVariant === 'primary'" [class.btn-secondary]="plan.ctaVariant === 'secondary'">
+              {{ plan.cta }}
+              <span class="btn-arrow">→</span>
+            </a>
+            @if (plan.ctaSecondary) {
+              <a routerLink="/" class="btn btn-secondary btn-outline">{{ plan.ctaSecondary }}</a>
+            }
+          </div>
+        </div>
+      }
+    </div>
+
+    <section class="feature-comparison">
+      <div class="comparison-header">
+        <span class="comparison-features-label">Features</span>
+        @for (plan of plans; track plan.name) {
+          <div class="comparison-plan-col">
+            <span class="comparison-plan-name">{{ plan.name }}</span>
+            <a routerLink="/" class="comparison-cta btn" [class.btn-primary]="plan.ctaVariant === 'primary'" [class.btn-secondary]="plan.ctaVariant === 'secondary'">
+              {{ plan.cta }}
+            </a>
+          </div>
+        }
+      </div>
+
+      @for (section of featureSections; track section.title) {
+        <div class="feature-section">
+          <span class="feature-category">{{ section.category }}</span>
+          <h3 class="feature-section-title">
+            @if (section.icon === 'globe') {
+              <ng-icon name="lucideGlobe" class="feature-icon" />
+            }
+            @if (section.icon === 'shield') {
+              <ng-icon name="lucideShield" class="feature-icon" />
+            }
+            @if (section.icon === 'cpu') {
+              <ng-icon name="lucideCpu" class="feature-icon" />
+            }
+            {{ section.title }}
+          </h3>
+          <p class="feature-section-subtitle">{{ section.subtitle }}</p>
+
+          @for (sub of section.subsections; track sub.name ?? $index) {
+            @if (sub.name) {
+              <h4 class="feature-subsection-name">{{ sub.name }}</h4>
+            }
+            <div class="feature-table">
+              @for (row of sub.rows; track row.name) {
+                <div class="feature-row">
+                  <div class="feature-cell feature-name">
+                    {{ row.name }}
+                    @if (row.info) {
+                      <span class="feature-info-icon" title="More details">i</span>
+                    }
+                  </div>
+                  <div class="feature-cell">{{ isCheck(row.hobby) ? '✓' : isDash(row.hobby) ? '—' : row.hobby }}</div>
+                  <div class="feature-cell">{{ isCheck(row.pro) ? '✓' : isDash(row.pro) ? '—' : row.pro }}</div>
+                  <div class="feature-cell">{{ isCheck(row.enterprise) ? '✓' : isDash(row.enterprise) ? '—' : row.enterprise }}</div>
+                </div>
+              }
+            </div>
+          }
+        </div>
+      }
+    </section>
+
+    <section class="pricing-faq">
+      <div class="faq-layout">
+        <h2 class="faq-title">Frequently asked questions.</h2>
+        <div class="faq-list">
+          @for (item of faqItems; track item.question; let i = $index) {
+            <button
+              type="button"
+              class="faq-item"
+              (click)="toggleFaq(i)"
+              [attr.aria-expanded]="expandedFaq() === i"
+            >
+              <span class="faq-question">{{ item.question }}</span>
+              <ng-icon
+                name="lucideChevronDown"
+                class="faq-chevron"
+                [class.faq-chevron-open]="expandedFaq() === i"
+              />
+            </button>
+            @if (expandedFaq() === i) {
+              <div class="faq-answer">{{ item.answer }}</div>
+            }
+          }
+        </div>
+      </div>
+      <p class="faq-subtitle">
+        Not sure which plan to pick? Discuss Pro or Enterprise needs with us, learn about custom pricing, or get a demo.
+      </p>
+    </section>
+
+    <section class="pricing-cta-blocks">
+      <div class="cta-block cta-block-demo">
+        <p class="cta-block-text">
+          Not sure which plan to pick? Discuss <span class="cta-highlight-pro">Pro</span> or <span class="cta-highlight-enterprise">Enterprise</span> needs with us, learn about custom pricing, or get a demo.
+        </p>
+        <a routerLink="/" class="cta-btn cta-btn-light">
+          Schedule a Demo
+          <span class="btn-arrow">→</span>
+        </a>
+      </div>
+      <div class="cta-block cta-block-roi">
+        <p class="cta-block-text">
+          CloudDeploy Enterprise drove 264% ROI. Boost velocity and increase conversions.
+        </p>
+        <a routerLink="/" class="cta-btn cta-btn-outline">
+          <ng-icon name="lucideFileText" class="cta-btn-icon" />
+          Read about our ROI study
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="pricing-footer">
+    <span>© 2025 CloudDeploy. All rights reserved.</span>
+  </footer>
+</div>

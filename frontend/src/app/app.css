@@ -1,0 +1,20 @@
+@import url('https://fonts.googleapis.com/css2?family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&display=swap');
+:host {
+  font-family: 'Google Sans', sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+  font-variation-settings: 'GRAD' 0;
+  display: block;
+  min-height: 100vh;
+}
+
+/* Announcement Banner */
+.announcement-banner {
+  background: var(--banner-bg);
+  color: var(--banner-fg);
+  text-align: center;
+  padding: 0.625rem 1rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+}
