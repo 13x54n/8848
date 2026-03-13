@@ -1,0 +1,32 @@
+<div class="dashboard-page">
+  <aside class="dashboard-sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-project">
+        <img src="https://images.unsplash.com/photo-1755498948221-b1b80c366c2e?q=80&w=3132&auto=format&fit=crop" alt="" class="sidebar-project-logo" />
+        <span class="sidebar-project-name">{{ projectLabel }}</span>
+        <span class="sidebar-badge">Hobby</span>
+      </div>
+    </div>
+    <div class="sidebar-search">
+      <ng-icon name="lucideSearch" class="sidebar-search-icon" />
+      <input type="text" placeholder="Find..." class="sidebar-search-input" />
+      <span class="sidebar-kbd">⌘F</span>
+    </div>
+    <nav class="sidebar-nav">
+      @for (item of navItems; track item.path) {
+        <a [routerLink]="['/dashboard', item.path]" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: false }" class="sidebar-nav-item">
+          <ng-icon [name]="item.icon" class="sidebar-nav-icon" />
+          <span>{{ item.label }}</span>
+        </a>
+      }
+    </nav>
+    <div class="sidebar-footer">
+      <span class="sidebar-user">{{ authService.getEmail() }}</span>
+      <button type="button" class="sidebar-logout" (click)="authService.logout()">Log out</button>
+    </div>
+  </aside>
+
+  <main class="dashboard-main">
+    <router-outlet />
+  </main>
+</div>

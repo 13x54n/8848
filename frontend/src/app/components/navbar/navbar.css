@@ -180,6 +180,12 @@
   opacity: 0.9;
 }
 
+.nav-logout {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+}
+
 @media (max-width: 768px) {
   .nav-menu,
   .nav-actions {

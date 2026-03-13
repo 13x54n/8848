@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { RouterLink, Router } from '@angular/router';
 import { provideIcons } from '@ng-icons/core';
 import { lucideGithub } from '@ng-icons/lucide';
 import { HlmIconImports } from '@spartan-ng/helm/icon';
 import { NavbarComponent } from '../../components/navbar/navbar';
+import { AuthService } from '../../services/auth.service';
 
 function passwordMatchValidator(control: AbstractControl): ValidationErrors | null {
   const password = control.parent?.get('password')?.value;
@@ -23,10 +24,15 @@ function passwordMatchValidator(control: AbstractControl): ValidationErrors | nu
 })
 export class SignupComponent implements OnInit {
   form: FormGroup;
+  errorMessage = '';
+  loading = false;
 
-  constructor(private fb: FormBuilder) {
+  constructor(
+    private fb: FormBuilder,
+    public authService: AuthService,
+    private router: Router
+  ) {
     this.form = this.fb.nonNullable.group({
-      name: ['', [Validators.required, Validators.minLength(2)]],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
       confirmPassword: ['', [Validators.required, passwordMatchValidator]],
@@ -41,7 +47,19 @@ export class SignupComponent implements OnInit {
 
   onSubmit(): void {
     if (this.form.valid) {
-      console.log('Sign up', this.form.getRawValue());
+      this.errorMessage = '';
+      this.loading = true;
+      const { email, password } = this.form.getRawValue();
+      this.authService.signup(email, password).subscribe({
+        next: () => {
+          this.loading = false;
+          this.router.navigate(['/dashboard']);
+        },
+        error: (err) => {
+          this.loading = false;
+          this.errorMessage = err.error?.message ?? 'Sign up failed. Please try again.';
+        },
+      });
     } else {
       this.form.markAllAsTouched();
     }

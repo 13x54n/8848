@@ -63,10 +63,10 @@ export class PricingComponent {
     {
       name: 'Pro',
       description: 'Everything you need to build and scale your app.',
-      price: '₨2,700',
+      price: '2,700 NPR',
       priceNote: '/mo + additional usage',
       features: [
-        '₨2,700 of included usage credit',
+        '2,700 NPR of included usage credit',
         'Advanced spend management',
         'Team collaboration & free viewer seats',
         'Faster builds + no queues',
@@ -129,7 +129,7 @@ export class PricingComponent {
         {
           rows: [
             { name: 'Edge Requests', hobby: '1M / month included', pro: '10M / month included then starting at ₨270 per 1M', enterprise: 'Custom', info: true },
-            { name: 'Fast Data Transfer', hobby: '100 GB / month included', pro: '1TB / month included then starting at ₨20 per GB', enterprise: 'Custom', info: true },
+            { name: 'Fast Data Transfer', hobby: '100 GB / month included', pro: '1TB / month included then starting at NPR 20 per GB', enterprise: 'Custom', info: true },
           ],
         },
       ],
@@ -150,12 +150,12 @@ export class PricingComponent {
         },
         {
           rows: [
-            { name: 'ISR Reads', hobby: '1M / month included', pro: 'Starting at ₨54 per 1M', enterprise: 'Custom', info: true },
-            { name: 'ISR Writes', hobby: '200,000 / month included', pro: 'Starting at ₨540 per 1M', enterprise: 'Custom', info: true },
-            { name: 'Bulk Redirects', hobby: 'dash', pro: '1K included per project, ₨6,750 per month per 25K redirects', enterprise: 'Custom' },
-            { name: 'Blob Storage Size', hobby: '1 GB / month included', pro: '₨3 per GB', enterprise: 'Custom', info: true },
-            { name: 'Blob Simple Operations', hobby: '10,000 / month included', pro: '₨54 per 1M', enterprise: 'Custom', info: true },
-            { name: 'Blob Advanced Operations', hobby: '2,000 / month included', pro: '₨675 per 1M', enterprise: 'Custom', info: true },
+              { name: 'ISR Reads', hobby: '1M / month included', pro: 'Starting at NPR 54 per 1M', enterprise: 'Custom', info: true },
+            { name: 'ISR Writes', hobby: '200,000 / month included', pro: 'Starting at NPR 540 per 1M', enterprise: 'Custom', info: true },
+            { name: 'Bulk Redirects', hobby: 'dash', pro: '1K included per project, NPR 6,750 per month per 25K redirects', enterprise: 'Custom' },
+            { name: 'Blob Storage Size', hobby: '1 GB / month included', pro: 'NPR 3 per GB', enterprise: 'Custom', info: true },
+            { name: 'Blob Simple Operations', hobby: '10,000 / month included', pro: 'NPR 54 per 1M', enterprise: 'Custom', info: true },
+            { name: 'Blob Advanced Operations', hobby: '2,000 / month included', pro: 'NPR 675 per 1M', enterprise: 'Custom', info: true },
             { name: 'Blob Data Transfer', hobby: '10 GB / month included', pro: 'Starting at ₨7 per GB', enterprise: 'Custom', info: true },
           ],
         },
@@ -182,9 +182,9 @@ export class PricingComponent {
         {
           name: 'Build minutes',
           rows: [
-            { name: 'Standard machines', hobby: 'dash', pro: 'Starting at ₨2 per minute', enterprise: 'Custom' },
-            { name: 'Enhanced machines', hobby: 'dash', pro: 'Starting at ₨4 per minute', enterprise: 'Custom' },
-            { name: 'Turbo machines', hobby: 'dash', pro: 'Starting at ₨17 per minute', enterprise: 'Custom' },
+            { name: 'Standard machines', hobby: 'dash', pro: 'Starting at NPR 2 per minute', enterprise: 'Custom' },
+            { name: 'Enhanced machines', hobby: 'dash', pro: 'Starting at NPR 4 per minute', enterprise: 'Custom' },
+            { name: 'Turbo machines', hobby: 'dash', pro: 'Starting at NPR 17 per minute', enterprise: 'Custom' },
           ],
         },
         {
@@ -208,7 +208,7 @@ export class PricingComponent {
           rows: [
             { name: 'Custom Firewall Rules', hobby: 'Up to 3', pro: 'Up to 40', enterprise: 'Up to 1,000' },
             { name: 'IP Blocking', hobby: 'Up to 3', pro: 'Up to 100', enterprise: 'Up to 1,000' },
-            { name: 'Rate Limiting', hobby: '1M allowed requests included / month', pro: 'Starting at ₨68 per 1M allowed requests', enterprise: 'Custom' },
+            { name: 'Rate Limiting', hobby: '1M allowed requests included / month', pro: 'Starting at NPR 68 per 1M allowed requests', enterprise: 'Custom' },
           ],
         },
       ],

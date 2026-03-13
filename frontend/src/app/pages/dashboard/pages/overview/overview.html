@@ -1,0 +1,195 @@
+<header class="dashboard-header overview-header">
+  <div class="header-left">
+    <!-- <button type="button" class="header-all-projects">
+      All Projects
+      <ng-icon name="lucideChevronDown" class="header-chevron" />
+    </button> -->
+  </div>
+  <h1 class="dashboard-title overview-title"></h1>
+  <div class="header-right">
+    <div class="header-actions">
+      <div class="notification-dropdown-wrapper">
+        <button
+          type="button"
+          class="header-notification-btn"
+          aria-label="Notifications"
+          [attr.aria-expanded]="notificationOpen"
+          (click)="toggleNotifications()"
+        >
+          <ng-icon name="lucideBell" class="header-notification-btn-icon" />
+          @if (unreadCount > 0) {
+            <span class="notification-badge">{{ unreadCount }}</span>
+          }
+        </button>
+        @if (notificationOpen) {
+          <div class="notification-backdrop" (click)="closeNotifications()" aria-hidden="true"></div>
+          <div class="notification-modal" role="dialog" aria-label="Notifications">
+            <div class="notification-modal-header">
+              <h3 class="notification-modal-title">Notifications</h3>
+              @if (unreadCount > 0) {
+                <span class="notification-modal-badge">{{ unreadCount }}</span>
+              }
+            </div>
+            <ul class="notification-list">
+              @for (n of notifications; track n.id) {
+                <li class="notification-item" [class.unread]="!n.read">
+                  <div class="notification-item-content">
+                    <span class="notification-item-title">{{ n.title }}</span>
+                    <span class="notification-item-message">{{ n.message }}</span>
+                    <span class="notification-item-time">{{ n.time }}</span>
+                  </div>
+                </li>
+              }
+            </ul>
+            @if (notifications.length === 0) {
+              <div class="notification-empty">No notifications</div>
+            }
+          </div>
+        }
+      </div>
+      <div class="view-switch" role="switch" [attr.aria-checked]="viewMode === 'grid'" aria-label="View mode">
+        <button type="button" class="view-switch-option" [class.active]="viewMode === 'list'" (click)="viewMode = 'list'" aria-label="List view">
+          <ng-icon name="lucideLayoutList" class="view-switch-icon" />
+        </button>
+        <button type="button" class="view-switch-option" [class.active]="viewMode === 'grid'" (click)="viewMode = 'grid'" aria-label="Grid view">
+          <ng-icon name="lucideLayoutGrid" class="view-switch-icon" />
+        </button>
+      </div>
+      <a routerLink="/dashboard/new-project" class="header-add-btn">
+        Add New
+      </a>
+    </div>
+  </div>
+</header>
+
+<div class="overview-search-row">
+  <div class="header-search overview-search">
+    <ng-icon name="lucideSearch" class="header-search-icon" />
+    <input type="text" placeholder="Search Projects..." class="header-search-input" />
+  </div>
+</div>
+
+<div class="dashboard-content">
+  <div class="dashboard-left">
+    <section class="usage-card">
+      <div class="card-header">
+        <h2 class="card-title">Usage</h2>
+        <button type="button" class="card-upgrade">Upgrade</button>
+      </div>
+      <p class="usage-period">Last 30 days</p>
+      <div class="usage-metrics">
+        @for (m of usageMetrics; track m.label) {
+          <div class="usage-item">
+            <div class="usage-label-row">
+              <span class="usage-label">{{ m.label }}</span>
+              <span class="usage-value">{{ m.value }} / {{ m.max }}</span>
+            </div>
+            <div class="usage-bar">
+              <div class="usage-bar-fill" [style.width.%]="m.pct"></div>
+            </div>
+          </div>
+        }
+      </div>
+    </section>
+
+
+    <section class="previews-card">
+      <h2 class="card-title">Recent Previews</h2>
+      <ul class="previews-list">
+        @for (p of previews; track p.hash) {
+          <li class="preview-item">
+            <div class="preview-avatar-wrap">
+              <img [src]="p.avatarUrl ?? defaultAvatarUrl" [alt]="p.title" class="preview-avatar" />
+            </div>
+            <div class="preview-content">
+              <div class="preview-header-row">
+                <span class="preview-title">{{ p.title }}</span>
+                <button type="button" class="preview-menu-btn" aria-label="More options">
+                  <ng-icon name="lucideMoreVertical" />
+                </button>
+              </div>
+              <div class="preview-actions">
+                <button type="button" class="preview-action-btn">
+                  <ng-icon name="lucideEye" class="preview-action-icon" />
+                  Preview
+                </button>
+                @if (p.prNumber != null) {
+                  <button type="button" class="preview-action-btn">
+                    <ng-icon name="lucideGitBranch" class="preview-action-icon" />
+                    #{{ p.prNumber }}
+                  </button>
+                }
+                @if (p.status === 'error') {
+                  <span class="preview-status-pill error">Error</span>
+                } @else {
+                  <span class="preview-status-pill hash">{{ p.hash }}</span>
+                }
+              </div>
+            </div>
+          </li>
+        }
+      </ul>
+    </section>
+  </div>
+
+  <div class="dashboard-right">
+    <section class="projects-card">
+      <h2 class="card-title">Projects</h2>
+      <div class="projects-grid" [class.list-view]="viewMode === 'list'">
+        @for (proj of projects; track proj.name) {
+          <article class="project-card">
+            <div class="project-card-header">
+              <div class="project-avatar-wrap">
+                <img [src]="proj.avatarUrl ?? defaultAvatarUrl" [alt]="proj.name" class="project-avatar-img" />
+              </div>
+              <div class="project-meta">
+                <h3 class="project-name">{{ proj.name }}</h3>
+                <a [href]="'https://' + proj.domain" target="_blank" rel="noopener" class="project-domain">
+                  {{ proj.domain }}
+                  <ng-icon name="lucideExternalLink" class="project-link-icon" />
+                </a>
+              </div>
+              <div class="project-card-actions">
+                @if (proj.score != null) {
+                  <span class="project-score-badge">{{ proj.score }}</span>
+                } @else if (proj.status === 'ready') {
+                  <span class="project-status-badge" title="Ready">
+                    <ng-icon name="lucideCheck" class="project-status-icon" />
+                  </span>
+                } @else if (proj.status === 'building') {
+                  <span class="project-status-badge building" title="Building">
+                    <ng-icon name="lucideActivity" class="project-status-icon" />
+                  </span>
+                } @else if (proj.status === 'error') {
+                  <span class="project-status-badge error" title="Error">
+                    <ng-icon name="lucideAlertTriangle" class="project-status-icon" />
+                  </span>
+                }
+                <button type="button" class="project-menu-btn" aria-label="More options">
+                  <ng-icon name="lucideMoreVertical" />
+                </button>
+              </div>
+            </div>
+            <div class="project-repo-row">
+              <ng-icon name="lucideGitBranch" class="project-repo-icon" />
+              <span class="project-repo">{{ proj.repo }}</span>
+            </div>
+            <div class="project-activity">
+              @if (proj.hasWarning) {
+                <ng-icon name="lucideZap" class="project-warning-icon" title="Warning" />
+              }
+              <span class="project-commit">{{ proj.commit }}</span>
+            </div>
+            <div class="project-footer">
+              <span class="project-date">{{ proj.date }}</span>
+              <span class="project-branch">
+                <ng-icon name="lucideGitBranch" class="project-branch-icon" />
+                {{ proj.branch }}
+              </span>
+            </div>
+          </article>
+        }
+      </div>
+    </section>
+  </div>
+</div>

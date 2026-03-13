@@ -1,0 +1,147 @@
+<div class="dashboard-page">
+  <!-- Sidebar (new navbar) -->
+  <aside class="dashboard-sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-project">
+        <img src="https://images.unsplash.com/photo-1755498948221-b1b80c366c2e?q=80&w=3132&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Google" class="sidebar-project-logo" />
+        <span class="sidebar-project-name">{{ projectLabel }}</span>
+        <span class="sidebar-badge">Hobby</span>
+      </div>
+    </div>
+    <div class="sidebar-search">
+      <ng-icon name="lucideSearch" class="sidebar-search-icon" />
+      <input type="text" placeholder="Find..." class="sidebar-search-input" />
+      <span class="sidebar-kbd">⌘F</span>
+    </div>
+    <nav class="sidebar-nav">
+      @for (item of navItems; track item.label) {
+        <a [href]="item.href" class="sidebar-nav-item" [class.active]="item.active">
+          <ng-icon [name]="item.icon" class="sidebar-nav-icon" />
+          <span>{{ item.label }}</span>
+        </a>
+      }
+    </nav>
+  </aside>
+
+  <!-- Main content -->
+  <main class="dashboard-main">
+    <header class="dashboard-header">
+      <div class="header-left">
+        <h1 class="dashboard-title">Overview</h1>
+      </div>
+      <div class="header-right">
+        <div class="header-search">
+          <ng-icon name="lucideSearch" class="header-search-icon" />
+          <input type="text" placeholder="Search Projects..." class="header-search-input" />
+        </div>
+        <div class="header-actions">
+          <div class="view-switch" role="switch" [attr.aria-checked]="viewMode === 'grid'" aria-label="View mode">
+            <button type="button" class="view-switch-option" [class.active]="viewMode === 'list'" (click)="viewMode = 'list'" aria-label="List view">
+              <ng-icon name="lucideLayoutList" class="view-switch-icon" />
+            </button>
+            <button type="button" class="view-switch-option" [class.active]="viewMode === 'grid'" (click)="viewMode = 'grid'" aria-label="Grid view">
+              <ng-icon name="lucideLayoutGrid" class="view-switch-icon" />
+            </button>
+          </div>
+          <div class="header-add-dropdown">
+            <button type="button" class="header-add-btn">
+              Add New...
+              <ng-icon name="lucideChevronDown" class="header-add-icon" />
+            </button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="dashboard-content">
+      <div class="dashboard-left">
+        <!-- Usage card -->
+        <section class="usage-card">
+          <div class="card-header">
+            <h2 class="card-title">Usage — Last 30 days</h2>
+            <button type="button" class="card-upgrade">Upgrade</button>
+          </div>
+          <div class="usage-metrics">
+            @for (m of usageMetrics; track m.label) {
+              <div class="usage-item">
+                <div class="usage-label-row">
+                  <span class="usage-label">{{ m.label }}</span>
+                  <span class="usage-value">{{ m.value }} / {{ m.max }}</span>
+                </div>
+                <div class="usage-bar">
+                  <div class="usage-bar-fill" [style.width.%]="m.pct"></div>
+                </div>
+              </div>
+            }
+          </div>
+        </section>
+
+        <!-- Alerts card -->
+        <!-- <section class="dashboard-card alerts-card">
+          <h2 class="card-title">Alerts</h2>
+          <p class="alerts-desc">Get alerted for anomalies. Automatically monitor your projects for anomalies and get notified.</p>
+          <button type="button" class="card-upgrade">Upgrade to Observability Plus</button>
+        </section> -->
+
+        <!-- Recent Previews -->
+        <section class="previews-card">
+          <h2 class="card-title">Recent Previews</h2>
+          <ul class="previews-list">
+            @for (p of previews; track p.hash) {
+              <li class="preview-item">
+                <span class="preview-status" [class.error]="p.status === 'error'">
+                  @if (p.status === 'ready') {
+                    <ng-icon name="lucideCheck" class="preview-status-icon" />
+                  } @else {
+                    <ng-icon name="lucideAlertTriangle" class="preview-status-icon" />
+                  }
+                </span>
+                <div class="preview-info">
+                  <span class="preview-title">{{ p.title }}</span>
+                  <span class="preview-meta">{{ p.branch }} · {{ p.commit }}</span>
+                  <span class="preview-hash">{{ p.hash }}</span>
+                </div>
+              </li>
+            }
+          </ul>
+        </section>
+      </div>
+
+      <div class="dashboard-right">
+        <!-- Projects grid -->
+        <section class="projects-card">
+          <h2 class="card-title">Projects</h2>
+          <div class="projects-grid" [class.list-view]="viewMode === 'list'">
+            @for (proj of projects; track proj.name) {
+              <article class="project-card">
+                <div class="project-card-header">
+                  <div class="project-avatar">{{ proj.name.charAt(0) | uppercase }}</div>
+                  <div class="project-meta">
+                    <h3 class="project-name">{{ proj.name }}</h3>
+                    <a [href]="'https://' + proj.domain" target="_blank" rel="noopener" class="project-domain">
+                      {{ proj.domain }}
+                      <ng-icon name="lucideExternalLink" class="project-link-icon" />
+                    </a>
+                    <span class="project-repo">github.com/{{ proj.repo }}</span>
+                  </div>
+                  <div class="project-card-actions">
+                    <span class="project-status" [class.ready]="proj.status === 'ready'" [class.building]="proj.status === 'building'" [class.error]="proj.status === 'error'">
+                      @if (proj.status === 'ready') {
+                        <ng-icon name="lucideCheck" />
+                      }
+                    </span>
+                    <button type="button" class="project-menu-btn" aria-label="More options">
+                      <ng-icon name="lucideMoreVertical" />
+                    </button>
+                  </div>
+                </div>
+                <p class="project-commit">{{ proj.commit }}</p>
+                <span class="project-date">{{ proj.date }}</span>
+              </article>
+            }
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+</div>

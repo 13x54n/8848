@@ -1,0 +1,102 @@
+<header class="usage-header">
+  <h1 class="usage-page-title">Usage</h1>
+  <div class="usage-header-controls">
+    <button type="button" class="usage-date-btn">
+      <ng-icon name="lucideClock" class="usage-btn-icon" />
+      Last 30 Days
+      <ng-icon name="lucideChevronDown" class="usage-chevron" />
+    </button>
+    <button type="button" class="usage-date-btn">
+      <ng-icon name="lucideCalendar" class="usage-btn-icon" />
+      Feb 11, 2am — Mar 13
+      <ng-icon name="lucideChevronDown" class="usage-chevron" />
+    </button>
+    <button type="button" class="usage-upgrade-btn">Upgrade to Pro</button>
+  </div>
+</header>
+
+<section class="usage-overview-section">
+  <h2 class="usage-section-title">Overview</h2>
+  <ul class="usage-overview-list">
+    @for (m of overviewMetrics; track m.label) {
+      <li class="usage-overview-item">
+        <span class="usage-overview-dot"></span>
+        <span class="usage-overview-label">{{ m.label }}</span>
+        <span class="usage-overview-value">{{ m.value }} / {{ m.max }}</span>
+      </li>
+    }
+  </ul>
+  <button type="button" class="usage-expand-btn" aria-label="Show more">
+    <ng-icon name="lucideChevronDown" class="usage-expand-icon" />
+  </button>
+</section>
+
+<section class="usage-networking-section">
+  <h2 class="usage-section-title">Networking</h2>
+  <div class="usage-info-alert">
+    <ng-icon name="lucideInfo" class="usage-info-icon" />
+    <span>Top paths have moved to <a href="#" class="usage-link">Observability</a> inside each project.</span>
+  </div>
+
+  <div class="usage-chart-card">
+    <div class="usage-chart-header">
+      <div class="usage-chart-title-row">
+        <h3 class="usage-chart-title">Fast Data Transfer</h3>
+        <span class="usage-chart-value">1.01 GB / 100 GB</span>
+      </div>
+      <p class="usage-chart-desc">The data transfer between Vercel's CDN and your sites' end users. <a href="#" class="usage-link">Learn More</a></p>
+      <div class="usage-chart-actions">
+        <button type="button" class="usage-observability-btn">
+          <ng-icon name="lucideBarChart3" class="usage-btn-icon" />
+          Open in Observability
+        </button>
+        <button type="button" class="usage-expand-chart-btn" aria-label="Expand">
+          <ng-icon name="lucideMaximize2" class="usage-btn-icon" />
+        </button>
+      </div>
+    </div>
+    <div class="usage-chart-tabs">
+      <button type="button" class="usage-tab active">Direction</button>
+      <button type="button" class="usage-tab">Projects</button>
+      <button type="button" class="usage-tab">Regions</button>
+    </div>
+    <div class="usage-chart-meta">
+      <span class="usage-updated">Updated just now</span>
+    </div>
+    <div class="usage-chart-area">
+      <div class="usage-chart-y-axis">
+        <span>200 MB</span>
+        <span>160 MB</span>
+        <span>120 MB</span>
+        <span>80 MB</span>
+        <span>40 MB</span>
+        <span>0 B</span>
+      </div>
+      <div class="usage-chart-body">
+        <div class="usage-chart-bars">
+          @for (bar of chartBars; track bar.id) {
+            <div class="usage-bar-wrapper" [style.height.%]="bar.total">
+              <div class="usage-bar-outgoing" [style.flex]="bar.outgoing"></div>
+              <div class="usage-bar-incoming" [style.flex]="bar.incoming"></div>
+            </div>
+          }
+        </div>
+        <div class="usage-chart-x-axis">
+          @for (label of chartLabels; track label) {
+            <span>{{ label }}</span>
+          }
+        </div>
+      </div>
+    </div>
+    <div class="usage-chart-legend">
+      <span class="usage-legend-item">
+        <span class="usage-legend-dot incoming"></span>
+        Incoming: 70.57 MB (7.0%)
+      </span>
+      <span class="usage-legend-item">
+        <span class="usage-legend-dot outgoing"></span>
+        Outgoing: 937.97 MB (93.0%)
+      </span>
+    </div>
+  </div>
+</section>

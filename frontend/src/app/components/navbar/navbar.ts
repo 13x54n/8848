@@ -1,5 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
 import { provideIcons } from '@ng-icons/core';
 import {
   lucideChevronDown,
@@ -34,6 +35,7 @@ import { ThemeService } from '../../services/theme.service';
 })
 export class NavbarComponent {
   protected readonly themeService = inject(ThemeService);
+  protected readonly authService = inject(AuthService);
   protected readonly productItems = [
     { title: 'Deploy', description: 'Deploy your apps with one click.', href: '#' },
     { title: 'Analytics', description: 'Track performance and usage.', href: '#' },

@@ -3,10 +3,45 @@ import { LandingComponent } from './pages/landing/landing';
 import { PricingComponent } from './pages/pricing/pricing';
 import { LoginComponent } from './pages/login/login';
 import { SignupComponent } from './pages/signup/signup';
+import { DashboardLayoutComponent } from './pages/dashboard/dashboard-layout';
+import { DashboardOverviewComponent } from './pages/dashboard/pages/overview/overview';
+import { DashboardProjectsComponent } from './pages/dashboard/pages/projects/projects';
+import { DashboardAnalyticsComponent } from './pages/dashboard/pages/analytics/analytics';
+import { DashboardSpeedInsightsComponent } from './pages/dashboard/pages/speed-insights/speed-insights';
+import { DashboardCdnComponent } from './pages/dashboard/pages/cdn/cdn';
+import { DashboardStorageComponent } from './pages/dashboard/pages/storage/storage';
+import { DashboardAgentComponent } from './pages/dashboard/pages/agent/agent';
+import { DashboardUsageComponent } from './pages/dashboard/pages/usage/usage';
+import { DashboardSupportComponent } from './pages/dashboard/pages/support/support';
+import { DashboardSettingsComponent } from './pages/dashboard/pages/settings/settings';
+import { DashboardNewProjectComponent } from './pages/dashboard/pages/new-project/new-project';
+import { AuthCallbackComponent } from './pages/auth-callback/auth-callback';
+import { authGuard } from './guards/auth.guard';
+import { guestGuard } from './guards/guest.guard';
 
 export const routes: Routes = [
-  { path: '', component: LandingComponent },
-  { path: 'pricing', component: PricingComponent },
-  { path: 'login', component: LoginComponent },
-  { path: 'signup', component: SignupComponent },
+  { path: '', component: LandingComponent, canActivate: [guestGuard] },
+  { path: 'pricing', component: PricingComponent, canActivate: [guestGuard] },
+  { path: 'login', component: LoginComponent, canActivate: [guestGuard] },
+  { path: 'signup', component: SignupComponent, canActivate: [guestGuard] },
+  { path: 'auth/callback', component: AuthCallbackComponent },
+  {
+    path: 'dashboard',
+    component: DashboardLayoutComponent,
+    canActivate: [authGuard],
+    children: [
+      { path: '', redirectTo: 'overview', pathMatch: 'full' },
+      { path: 'overview', component: DashboardOverviewComponent },
+      { path: 'new-project', component: DashboardNewProjectComponent },
+      { path: 'usage', component: DashboardUsageComponent },
+      { path: 'projects', component: DashboardProjectsComponent },
+      { path: 'analytics', component: DashboardAnalyticsComponent },
+      { path: 'speed-insights', component: DashboardSpeedInsightsComponent },
+      { path: 'cdn', component: DashboardCdnComponent },
+      { path: 'storage', component: DashboardStorageComponent },
+      { path: 'agent', component: DashboardAgentComponent },
+      { path: 'support', component: DashboardSupportComponent },
+      { path: 'settings', component: DashboardSettingsComponent },
+    ],
+  },
 ];

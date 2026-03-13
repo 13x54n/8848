@@ -3,11 +3,11 @@
 
   <main class="auth-main">
     <div class="auth-card">
-      <h1 class="auth-title">Create your account</h1>
-      <p class="auth-subtitle">Sign up with GitHub or use your email</p>
+      <h1 class="auth-title">Create your account.</h1>
+      <p class="auth-subtitle">Sign up with GitHub or use your email.</p>
 
       <div class="auth-social-first">
-        <a href="#" class="auth-btn auth-btn-primary auth-btn-social">
+        <a [href]="authService.getGithubLoginUrl()" class="auth-btn auth-btn-primary auth-btn-social">
           <ng-icon name="lucideGithub" class="auth-btn-icon" />
           Sign up with GitHub
         </a>
@@ -16,6 +16,10 @@
       <div class="auth-divider">
         <span>Or continue with email</span>
       </div>
+
+      @if (errorMessage) {
+        <div class="form-error-banner">{{ errorMessage }}</div>
+      }
 
       <form [formGroup]="form" (ngSubmit)="onSubmit()" class="auth-form">
         <div class="form-group">
@@ -63,8 +67,8 @@
           }
         </div>
 
-        <button type="submit" class="auth-btn auth-btn-secondary" [disabled]="form.invalid">
-          Sign up with email
+        <button type="submit" class="auth-btn auth-btn-secondary" [disabled]="form.invalid || loading">
+          {{ loading ? 'Creating account...' : 'Sign up with email' }}
         </button>
       </form>
 

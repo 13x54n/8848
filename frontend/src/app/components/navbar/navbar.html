@@ -103,7 +103,12 @@
         <ng-icon name="lucideMoon" class="theme-icon" />
       }
     </button>
-    <a routerLink="/login" class="nav-login">Log in</a>
-    <a routerLink="/signup" class="nav-cta">Sign up</a>
+    @if (authService.isAuthenticated()) {
+      <a routerLink="/dashboard" class="nav-login">Dashboard</a>
+      <button type="button" class="nav-cta nav-logout" (click)="authService.logout()">Log out</button>
+    } @else {
+      <a routerLink="/login" class="nav-login">Log in</a>
+      <a routerLink="/signup" class="nav-cta">Sign up</a>
+    }
   </div>
 </div>

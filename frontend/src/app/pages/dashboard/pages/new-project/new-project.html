@@ -1,0 +1,99 @@
+<div class="new-project-page">
+  <header class="new-project-header">
+    <a routerLink="/dashboard/overview" class="new-project-back">
+      <ng-icon name="lucideArrowLeft" class="new-project-back-icon" />
+      Back
+    </a>
+    <h1 class="new-project-title">New Project</h1>
+    <div class="new-project-avatar-wrap">
+      <img [src]="defaultAvatarUrl" alt="User" class="new-project-avatar" />
+    </div>
+  </header>
+
+  <section class="new-project-hero">
+    <h2 class="new-project-hero-title">Let's build something new</h2>
+    <div class="new-project-url-input-wrap">
+      <ng-icon name="lucideLink" class="new-project-url-icon" />
+      <input
+        type="text"
+        class="new-project-url-input"
+        placeholder="Enter a Git repository URL to deploy..."
+        [(ngModel)]="gitUrl"
+      />
+    </div>
+  </section>
+
+  <div class="new-project-sections">
+    <section class="new-project-section import-section">
+      <h3 class="new-project-section-title">Import Git Repository</h3>
+      @if (githubLoading) {
+        <div class="import-loading">Checking GitHub connection...</div>
+      } @else if (githubConnected) {
+        <div class="import-connected">
+          <div class="import-toolbar">
+            <button type="button" class="import-dropdown">
+              <img src="https://avatars.githubusercontent.com/u/9919?s=48&v=4" alt="GitHub" class="import-dropdown-icon" />
+              <span class="import-dropdown-text">13x54n</span>
+              <ng-icon name="lucideChevronDown" class="import-dropdown-chevron" />
+            </button>
+            <div class="import-search-wrap">
+              <ng-icon name="lucideSearch" class="import-search-icon" />
+              <input type="text" placeholder="Search..." class="import-search-input" />
+            </div>
+          </div>
+          <ul class="import-repo-list">
+            @for (repo of repos; track repo.name) {
+              <li class="import-repo-item">
+                <img [src]="repo.avatarUrl ?? defaultAvatarUrl" [alt]="repo.name" class="import-repo-avatar" />
+                <div class="import-repo-info">
+                  <span class="import-repo-name">{{ repo.name }}</span>
+                  <span class="import-repo-updated">{{ repo.updated }}</span>
+                </div>
+                <button type="button" class="import-repo-btn">Import</button>
+              </li>
+            }
+          </ul>
+        </div>
+      } @else {
+        <div class="import-disconnected">
+          <div class="import-connect-card">
+            <ng-icon name="lucideGithub" class="import-connect-icon" />
+            <p class="import-connect-text">Connect your GitHub account to import repositories.</p>
+            <button type="button" class="import-connect-btn" (click)="connectGithub()">
+              Connect GitHub
+            </button>
+          </div>
+        </div>
+      }
+    </section>
+
+    <section class="new-project-section clone-section">
+      <div class="clone-header">
+        <h3 class="new-project-section-title">Clone Template</h3>
+        <div class="clone-actions">
+          <button type="button" class="clone-filter-btn">
+            Filter
+            <ng-icon name="lucideChevronDown" class="clone-filter-icon" />
+          </button>
+          <a href="#" class="clone-browse-link">
+            Browse All
+            <ng-icon name="lucideExternalLink" class="clone-browse-icon" />
+          </a>
+        </div>
+      </div>
+      <div class="clone-grid">
+        @for (t of templates; track t.title) {
+          <article class="clone-card">
+            <div class="clone-card-thumb">
+              <img [src]="t.thumbnail" [alt]="t.title" class="clone-card-img" />
+            </div>
+            <div class="clone-card-body">
+              <h4 class="clone-card-title">{{ t.title }}</h4>
+              <p class="clone-card-desc">{{ t.description }}</p>
+            </div>
+          </article>
+        }
+      </div>
+    </section>
+  </div>
+</div>
