@@ -1,15 +1,222 @@
 <div class="new-project-page">
   <header class="new-project-header">
-    <a routerLink="/dashboard/overview" class="new-project-back">
-      <ng-icon name="lucideArrowLeft" class="new-project-back-icon" />
-      Back
-    </a>
-    <h1 class="new-project-title">New Project</h1>
-    <div class="new-project-avatar-wrap">
-      <img [src]="defaultAvatarUrl" alt="User" class="new-project-avatar" />
-    </div>
+    @if (selectedSource !== 'none') {
+      <button type="button" class="new-project-back new-project-back-btn" (click)="clearSelection()">
+        <ng-icon name="lucideArrowLeft" class="new-project-back-icon" />
+        Back
+      </button>
+    } @else {
+      <a routerLink="/dashboard/overview" class="new-project-back">
+        <ng-icon name="lucideArrowLeft" class="new-project-back-icon" />
+        Back
+      </a>
+    }
   </header>
 
+  @if (selectedSource === 'git' && selectedRepo) {
+    <div class="config-card">
+      <h2 class="config-card-title">New Project</h2>
+      <div class="config-preview">
+
+        <div class="config-preview-body">
+          
+          <div class="config-source-info">
+            <span class="config-source-label">Importing from GitHub</span>
+            <div class="config-source-meta">
+              <ng-icon name="lucideGithub" class="config-source-icon" />
+              <span>{{ selectedRepo.fullName }}</span>
+              <ng-icon name="lucideGitBranch" class="config-source-icon" />
+              <span>main</span>
+              <ng-icon name="lucideFolder" class="config-source-icon" />
+              <span>./</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p class="config-subheading">Choose where you want to create the project and give it a name.</p>
+      <div class="config-fields">
+        <div class="config-field config-field-row">
+          <div class="config-field-group config-dropdown-wrap">
+            <label class="config-label">Vercel Team</label>
+            <div class="config-select-wrap config-select-sm" (click)="presetDropdownOpen = false; gitScopeDropdownOpen = false; teamDropdownOpen = !teamDropdownOpen">
+              <span class="config-select-text">{{ selectedTeam.label }}</span>
+              <span class="config-badge">{{ selectedTeam.plan }}</span>
+              <ng-icon [name]="teamDropdownOpen ? 'lucideChevronUp' : 'lucideChevronDown'" class="config-select-chevron" />
+            </div>
+            @if (teamDropdownOpen) {
+              <div class="config-dropdown" (click)="$event.stopPropagation()">
+                @for (opt of teamOptions; track opt.label) {
+                  <button type="button" class="config-dropdown-item" (click)="selectTeam(opt)">
+                    {{ opt.label }} <span class="config-badge config-badge-sm">{{ opt.plan }}</span>
+                  </button>
+                }
+              </div>
+            }
+          </div>
+          <div class="config-field-group">
+            <label class="config-label">Project Name</label>
+            <input type="text" class="config-input" [(ngModel)]="projectName" />
+          </div>
+        </div>
+        <div class="config-field config-dropdown-wrap">
+          <label class="config-label">Application Preset</label>
+          <div class="config-select-wrap" (click)="teamDropdownOpen = false; gitScopeDropdownOpen = false; presetDropdownOpen = !presetDropdownOpen">
+            <ng-icon name="lucideAlertTriangle" class="config-select-warn" />
+            <span class="config-select-text">{{ applicationPreset }}</span>
+            <ng-icon [name]="presetDropdownOpen ? 'lucideChevronUp' : 'lucideChevronDown'" class="config-select-chevron" />
+          </div>
+            @if (presetDropdownOpen) {
+            <div class="config-dropdown config-dropdown-preset" (click)="$event.stopPropagation()">
+              @for (preset of applicationPresets; track preset) {
+                <button type="button" class="config-dropdown-item" (click)="selectPreset(preset)">
+                  {{ preset }}
+                </button>
+              }
+            </div>
+          }
+        </div>
+        <div class="config-field">
+          <label class="config-label">Root Directory</label>
+          <div class="config-input-row">
+            <input type="text" class="config-input" [(ngModel)]="rootDirectory" />
+            <button type="button" class="config-edit-btn">Edit</button>
+          </div>
+        </div>
+        <div class="config-collapse">
+          <button type="button" class="config-collapse-btn" (click)="buildExpanded = !buildExpanded">
+            <ng-icon [name]="buildExpanded ? 'lucideChevronDown' : 'lucideChevronRight'" class="config-collapse-icon" />
+            Build and Output Settings
+          </button>
+          @if (buildExpanded) {
+            <div class="config-collapse-content">Configure build command, output directory, etc.</div>
+          }
+        </div>
+        <div class="config-collapse">
+          <button type="button" class="config-collapse-btn" (click)="envExpanded = !envExpanded">
+            <ng-icon [name]="envExpanded ? 'lucideChevronDown' : 'lucideChevronRight'" class="config-collapse-icon" />
+            Environment Variables
+          </button>
+          @if (envExpanded) {
+            <div class="config-collapse-content">Add environment variables for your project.</div>
+          }
+        </div>
+      </div>
+      <button type="button" class="config-submit-btn" (click)="createFromGit()">Deploy</button>
+      <section class="config-deployment">
+        <h3 class="config-deployment-title">Deployment</h3>
+        <p class="config-deployment-desc">Once you're ready, start deploying to see the progress here.</p>
+        <div class="config-deployment-placeholder">
+          <svg class="config-deployment-globe" viewBox="0 0 120 120" fill="none" stroke="currentColor" stroke-width="0.5" stroke-opacity="0.3">
+            <ellipse cx="60" cy="60" rx="50" ry="25" />
+            <ellipse cx="60" cy="60" rx="25" ry="50" />
+            <ellipse cx="60" cy="60" rx="50" ry="25" transform="rotate(60 60 60)" />
+            <ellipse cx="60" cy="60" rx="25" ry="50" transform="rotate(60 60 60)" />
+            <ellipse cx="60" cy="60" rx="50" ry="25" transform="rotate(120 60 60)" />
+            <ellipse cx="60" cy="60" rx="25" ry="50" transform="rotate(120 60 60)" />
+          </svg>
+        </div>
+      </section>
+      <div class="config-footer-links">
+        <button type="button" class="config-footer-link" (click)="clearSelection()">Import a different Git Repository →</button>
+        <a routerLink="/dashboard/templates" class="config-footer-link">Browse Templates →</a>
+      </div>
+    </div>
+  } @else if (selectedSource === 'template' && selectedTemplate) {
+    <div class="config-card">
+      <h2 class="config-card-title">New Project</h2>
+      <div class="config-preview">
+        <!-- <div class="config-preview-thumb">
+          <span class="config-preview-thumb-text">NEXT.</span>
+        </div> -->
+        <div class="config-preview-body">
+
+          <div class="config-source-info">
+            <span class="config-source-label">Cloning from GitHub</span>
+            @if (selectedTemplate.repoUrl) {
+              <div class="config-source-meta">
+                <ng-icon name="lucideGithub" class="config-source-icon" />
+                <span>{{ selectedTemplate.repoUrl.replace('https://github.com/', '') }}</span>
+                <ng-icon name="lucideGitBranch" class="config-source-icon" />
+                <span>main</span>
+                @if (selectedTemplate.rootDir) {
+                  <ng-icon name="lucideFolder" class="config-source-icon" />
+                  <span>{{ selectedTemplate.rootDir }}</span>
+                }
+              </div>
+            }
+          </div>
+          <p class="config-preview-note">Create a Git repository to easily update your project after deploying it. Every push to that Git repository will be deployed automatically.</p>
+        </div>
+      </div>
+      <div class="config-fields">
+        <div class="config-field config-dropdown-wrap">
+          <label class="config-label">Git Scope</label>
+          <div class="config-select-wrap" (click)="teamDropdownOpen = false; presetDropdownOpen = false; gitScopeDropdownOpen = !gitScopeDropdownOpen">
+            <ng-icon name="lucideGithub" class="config-select-icon" />
+            <span class="config-select-text">{{ selectedGitScope.label }}</span>
+            <ng-icon [name]="gitScopeDropdownOpen ? 'lucideChevronUp' : 'lucideChevronDown'" class="config-select-chevron" />
+          </div>
+          @if (gitScopeDropdownOpen) {
+            <div class="config-dropdown" (click)="$event.stopPropagation()">
+              @for (opt of gitScopeOptions; track opt.label) {
+                <button type="button" class="config-dropdown-item" (click)="selectGitScope(opt)">
+                  <ng-icon [name]="opt.icon" class="config-dropdown-item-icon" />
+                  {{ opt.label }}
+                </button>
+              }
+            </div>
+          }
+        </div>
+        <div class="config-field">
+          <label class="config-label">Private Repository Name</label>
+          <div class="config-input-row">
+            <input type="text" class="config-input" [(ngModel)]="privateRepoName" />
+            <label class="config-toggle">
+              <input type="checkbox" [(ngModel)]="privateRepo" />
+              <span class="config-toggle-slider"></span>
+            </label>
+            <ng-icon name="lucideLock" class="config-field-icon" />
+          </div>
+        </div>
+        <div class="config-field config-dropdown-wrap">
+          <label class="config-label">Vercel Team</label>
+          <div class="config-select-wrap" (click)="presetDropdownOpen = false; gitScopeDropdownOpen = false; teamDropdownOpen = !teamDropdownOpen">
+            <span class="config-select-text">{{ selectedTeam.label }}</span>
+            <span class="config-badge">{{ selectedTeam.plan }}</span>
+            <ng-icon [name]="teamDropdownOpen ? 'lucideChevronUp' : 'lucideChevronDown'" class="config-select-chevron" />
+          </div>
+          @if (teamDropdownOpen) {
+            <div class="config-dropdown">
+              @for (opt of teamOptions; track opt.label) {
+                <button type="button" class="config-dropdown-item" (click)="selectTeam(opt)">
+                  {{ opt.label }} <span class="config-badge config-badge-sm">{{ opt.plan }}</span>
+                </button>
+              }
+            </div>
+          }
+        </div>
+      </div>
+      <button type="button" class="config-submit-btn" (click)="deployFromTemplate()">Create</button>
+      <section class="config-deployment">
+        <h3 class="config-deployment-title">Deployment</h3>
+        <p class="config-deployment-desc">Once you're ready, start deploying to see the progress here.</p>
+        <div class="config-deployment-placeholder">
+          <svg class="config-deployment-globe" viewBox="0 0 120 120" fill="none" stroke="currentColor" stroke-width="0.5" stroke-opacity="0.3">
+            <ellipse cx="60" cy="60" rx="50" ry="25" />
+            <ellipse cx="60" cy="60" rx="25" ry="50" />
+            <ellipse cx="60" cy="60" rx="50" ry="25" transform="rotate(60 60 60)" />
+            <ellipse cx="60" cy="60" rx="25" ry="50" transform="rotate(60 60 60)" />
+            <ellipse cx="60" cy="60" rx="50" ry="25" transform="rotate(120 60 60)" />
+            <ellipse cx="60" cy="60" rx="25" ry="50" transform="rotate(120 60 60)" />
+          </svg>
+        </div>
+      </section>
+      <div class="config-footer-links">
+        <button type="button" class="config-footer-link" (click)="clearSelection()">Import a different Git Repository →</button>
+        <a routerLink="/dashboard/templates" class="config-footer-link">Browse Templates →</a>
+      </div>
+    </div>
+  } @else {
   <section class="new-project-hero">
     <h2 class="new-project-hero-title">Let's build something new</h2>
     <div class="new-project-url-input-wrap">
@@ -19,6 +226,7 @@
         class="new-project-url-input"
         placeholder="Enter a Git repository URL to deploy..."
         [(ngModel)]="gitUrl"
+        (keydown.enter)="proceedFromGitUrl()"
       />
     </div>
   </section>
@@ -31,28 +239,52 @@
       } @else if (githubConnected) {
         <div class="import-connected">
           <div class="import-toolbar">
-            <button type="button" class="import-dropdown">
-              <img src="https://avatars.githubusercontent.com/u/9919?s=48&v=4" alt="GitHub" class="import-dropdown-icon" />
-              <span class="import-dropdown-text">13x54n</span>
-              <ng-icon name="lucideChevronDown" class="import-dropdown-chevron" />
-            </button>
             <div class="import-search-wrap">
               <ng-icon name="lucideSearch" class="import-search-icon" />
-              <input type="text" placeholder="Search..." class="import-search-input" />
+              <input
+                type="text"
+                placeholder="Search repositories..."
+                class="import-search-input"
+                [(ngModel)]="repoSearch"
+                (ngModelChange)="onRepoSearchInput()"
+              />
             </div>
           </div>
-          <ul class="import-repo-list">
-            @for (repo of repos; track repo.name) {
-              <li class="import-repo-item">
-                <img [src]="repo.avatarUrl ?? defaultAvatarUrl" [alt]="repo.name" class="import-repo-avatar" />
-                <div class="import-repo-info">
-                  <span class="import-repo-name">{{ repo.name }}</span>
-                  <span class="import-repo-updated">{{ repo.updated }}</span>
-                </div>
-                <button type="button" class="import-repo-btn">Import</button>
-              </li>
-            }
-          </ul>
+          @if (reposLoading) {
+            <div class="import-loading">Loading your repositories...</div>
+          } @else if (reposError) {
+            <div class="import-empty import-error">
+              <p>{{ reposError }}</p>
+              <button type="button" class="import-retry-btn" (click)="loadRepos()">Retry</button>
+            </div>
+          } @else if (repos.length === 0) {
+            <div class="import-empty">No repositories found. Create one on GitHub or paste a Git URL above.</div>
+          } @else {
+            <ul class="import-repo-list">
+              @for (repo of repos; track repo.id) {
+                <li class="import-repo-item">
+                  <span class="import-repo-type" [attr.title]="repo.projectType ?? 'Other'">
+                    <img [src]="getProjectTypeLogo(repo.projectType)" [alt]="repo.projectType ?? 'Other'" class="import-repo-type-icon" />
+                  </span>
+                  <div class="import-repo-info">
+                    <span class="import-repo-name">
+                      {{ repo.name }}
+                      @if (repo.isPrivate) {
+                        <ng-icon name="lucideLock" class="import-repo-lock" />
+                      }
+                    </span>
+                    <span class="import-repo-meta">
+                      @if (repo.description) {
+                        <span class="import-repo-desc">{{ repo.description }}</span>
+                      }
+                      <span class="import-repo-updated">{{ formatUpdated(repo.updatedAt) }}</span>
+                    </span>
+                  </div>
+                  <button type="button" class="import-repo-btn" (click)="importRepo(repo)">Import</button>
+                </li>
+              }
+            </ul>
+          }
         </div>
       } @else {
         <div class="import-disconnected">
@@ -75,7 +307,7 @@
             Filter
             <ng-icon name="lucideChevronDown" class="clone-filter-icon" />
           </button>
-          <a href="#" class="clone-browse-link">
+          <a routerLink="/dashboard/templates" class="clone-browse-link">
             Browse All
             <ng-icon name="lucideExternalLink" class="clone-browse-icon" />
           </a>
@@ -83,7 +315,7 @@
       </div>
       <div class="clone-grid">
         @for (t of templates; track t.title) {
-          <article class="clone-card">
+          <article class="clone-card" (click)="selectTemplate(t)">
             <div class="clone-card-thumb">
               <img [src]="t.thumbnail" [alt]="t.title" class="clone-card-img" />
             </div>
@@ -96,4 +328,5 @@
       </div>
     </section>
   </div>
+  }
 </div>

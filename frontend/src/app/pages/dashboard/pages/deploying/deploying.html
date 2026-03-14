@@ -1,0 +1,162 @@
+@if (ctx(); as c) {
+  <div class="deploy-page">
+    <header class="deploy-header">
+      <div class="deploy-header-source">
+        <ng-icon name="lucideGithub" class="deploy-header-icon" />
+        <span>{{ c.sourceRepo }}</span>
+        @if (c.branch) {
+          <ng-icon name="lucideGitBranch" class="deploy-header-icon" />
+          <span>{{ c.branch }}</span>
+        }
+        @if (c.rootDir) {
+          <ng-icon name="lucideFolder" class="deploy-header-icon" />
+          <span>{{ c.rootDir }}</span>
+        }
+      </div>
+      <div class="deploy-header-team">
+        <span class="deploy-header-team-label">{{ teamLabel() }}</span>
+        <span class="deploy-header-badge">Hobby</span>
+      </div>
+    </header>
+
+    <main class="deploy-main">
+      <h1 class="deploy-title">Deployment</h1>
+
+      @switch (stage()) {
+        @case ('preparing') {
+          <div class="deploy-preparing">
+            <p class="deploy-status">Preparing Git Repository...</p>
+            <div class="deploy-clone-diagram">
+              <div class="deploy-clone-folder">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
+                </svg>
+              </div>
+              <div class="deploy-clone-arrow"></div>
+              <div class="deploy-clone-github">
+                <ng-icon name="lucideGithub" class="deploy-clone-github-icon" />
+              </div>
+            </div>
+            <p class="deploy-clone-text">
+              Cloning {{ c.sourceRepo }}{{ c.rootDir ? '/' + c.rootDir : '' }} to {{ c.teamName ?? 'user' }}/{{ c.projectName }}
+            </p>
+          </div>
+        }
+        @case ('deploying') {
+          <div class="deploy-deploying">
+            <p class="deploy-status deploy-status-spinner">
+              <span class="deploy-spinner"></span>
+              Deployment started {{ elapsedSeconds() }}s ago...
+            </p>
+
+            <div class="deploy-sections">
+              <div class="deploy-section">
+                <button type="button" class="deploy-section-header" (click)="buildLogsExpanded.set(!buildLogsExpanded())">
+                  <ng-icon [name]="buildLogsExpanded() ? 'lucideChevronDown' : 'lucideChevronRight'" class="deploy-section-chevron" />
+                  <span>Build Logs</span>
+                  <span class="deploy-section-meta">
+                    <span>{{ elapsedSeconds() }}s</span>
+                    <span class="deploy-spinner deploy-spinner-sm"></span>
+                  </span>
+                </button>
+                @if (buildLogsExpanded()) {
+                  <div class="deploy-section-content deploy-logs">
+                    <div class="deploy-logs-toolbar">
+                      <span class="deploy-logs-count">{{ getBuildLogs().length }} lines</span>
+                      <div class="deploy-logs-search">
+                        <ng-icon name="lucideSearch" class="deploy-logs-search-icon" />
+                        <input type="text" placeholder="Find in logs" class="deploy-logs-search-input" />
+                        <span class="deploy-logs-shortcut">⌘ F</span>
+                      </div>
+                    </div>
+                    <div class="deploy-logs-body">
+                      @for (line of getBuildLogs(); track $index) {
+                        <div class="deploy-log-line">
+                          <span class="deploy-log-time">16:53:0{{ $index }}.{{ 800 + $index * 100 }}</span>
+                          <span class="deploy-log-text">{{ line }}</span>
+                        </div>
+                      }
+                    </div>
+                  </div>
+                }
+              </div>
+
+              <div class="deploy-section">
+                <button type="button" class="deploy-section-header" (click)="deploySummaryExpanded.set(!deploySummaryExpanded())">
+                  <ng-icon [name]="deploySummaryExpanded() ? 'lucideChevronDown' : 'lucideChevronRight'" class="deploy-section-chevron" />
+                  <span>Deployment Summary</span>
+                  <ng-icon name="lucideClock" class="deploy-section-icon" />
+                </button>
+              </div>
+
+              <div class="deploy-section">
+                <button type="button" class="deploy-section-header" (click)="domainsExpanded.set(!domainsExpanded())">
+                  <ng-icon [name]="domainsExpanded() ? 'lucideChevronDown' : 'lucideChevronRight'" class="deploy-section-chevron" />
+                  <span>Assigning Custom Domains</span>
+                  <ng-icon name="lucideClock" class="deploy-section-icon" />
+                </button>
+              </div>
+            </div>
+
+            <a href="#" class="deploy-commit-link">Initial commit - 1ae57b</a>
+          </div>
+        }
+        @case ('success') {
+          <div class="deploy-success">
+            <h2 class="deploy-success-title">Congratulations!</h2>
+            <p class="deploy-success-subtitle">You just deployed a new project to 🌎 {{ teamLabel() }}.</p>
+
+            @if (ctx()?.previewImage) {
+              <div class="deploy-success-card">
+                <div class="deploy-success-card-preview">
+                  <img [src]="ctx()!.previewImage" [alt]="ctx()?.projectTitle ?? 'Project preview'" class="deploy-success-preview-img" />
+                </div>
+              </div>
+            }
+
+            <section class="deploy-next-steps">
+              <h3 class="deploy-next-steps-title">Next Steps</h3>
+              <div class="deploy-next-steps-list">
+                <a href="#" class="deploy-next-step">
+                  <span class="deploy-next-step-icon">P</span>
+                  <div class="deploy-next-step-body">
+                    <span class="deploy-next-step-title">Instant Previews</span>
+                    <span class="deploy-next-step-desc">Push a new branch to preview changes instantly</span>
+                  </div>
+                  <ng-icon name="lucideChevronRight" class="deploy-next-step-arrow" />
+                </a>
+                <a href="#" class="deploy-next-step">
+                  <ng-icon name="lucideGlobe" class="deploy-next-step-icon-svg" />
+                  <div class="deploy-next-step-body">
+                    <span class="deploy-next-step-title">Add Domain</span>
+                    <span class="deploy-next-step-desc">Add a custom domain to your project</span>
+                  </div>
+                  <ng-icon name="lucideChevronRight" class="deploy-next-step-arrow" />
+                </a>
+                <a href="#" class="deploy-next-step">
+                  <ng-icon name="lucideZap" class="deploy-next-step-icon-svg" />
+                  <div class="deploy-next-step-body">
+                    <span class="deploy-next-step-title">Enable Speed Insights</span>
+                    <span class="deploy-next-step-desc">Track how users experience your site over time</span>
+                  </div>
+                  <ng-icon name="lucideChevronRight" class="deploy-next-step-arrow" />
+                </a>
+              </div>
+            </section>
+
+            <button type="button" class="deploy-continue-btn" (click)="continueToDashboard()">Continue to Dashboard</button>
+          </div>
+        }
+      }
+    </main>
+
+    @if (stage() !== 'success') {
+      <footer class="deploy-footer">
+        <button type="button" class="deploy-footer-link" (click)="importDifferent()">Import a different Git Repository →</button>
+        <a routerLink="/dashboard/templates" class="deploy-footer-link">Browse Templates →</a>
+      </footer>
+    }
+  </div>
+} @else {
+  <div class="deploy-page deploy-page-loading">Loading...</div>
+}

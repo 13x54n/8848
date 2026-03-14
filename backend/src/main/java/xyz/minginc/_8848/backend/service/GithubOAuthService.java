@@ -45,7 +45,7 @@ public class GithubOAuthService {
         }
         return "https://github.com/login/oauth/authorize?client_id=" + clientId
                 + "&redirect_uri=" + redirectUri
-                + "&scope=user:email,read:user"
+                + "&scope=user:email,read:user,repo"
                 + "&state=" + state;
     }
 
@@ -57,11 +57,10 @@ public class GithubOAuthService {
         String accessToken = exchangeCodeForToken(code);
         if (accessToken == null) return Optional.empty();
 
-        String email = fetchEmail(accessToken);
-        String githubId = fetchGithubId(accessToken);
-        if (email == null || githubId == null) return Optional.empty();
+        GithubUserProfile profile = fetchUserProfile(accessToken);
+        if (profile == null) return Optional.empty();
 
-        return Optional.of(new GithubAuthResult(email, githubId, accessToken));
+        return Optional.of(new GithubAuthResult(profile.email(), profile.githubId(), profile.githubUsername(), profile.name(), profile.avatarUrl(), accessToken));
     }
 
     private String exchangeCodeForToken(String code) {
@@ -90,7 +89,7 @@ public class GithubOAuthService {
         return null;
     }
 
-    private String fetchEmail(String accessToken) {
+    private GithubUserProfile fetchUserProfile(String accessToken) {
         try {
             HttpHeaders headers = new HttpHeaders();
             headers.setBearerAuth(accessToken);
@@ -104,26 +103,33 @@ public class GithubOAuthService {
 
             if (userResponse.getStatusCode().is2xxSuccessful() && userResponse.getBody() != null) {
                 JsonNode user = objectMapper.readTree(userResponse.getBody());
-                if (user.has("email") && !user.get("email").isNull()) {
-                    return user.get("email").asText();
-                }
-            }
+                String githubId = user.has("id") ? String.valueOf(user.get("id").asLong()) : null;
+                String githubUsername = user.has("login") && !user.get("login").isNull() ? user.get("login").asText() : null;
+                String name = user.has("name") && !user.get("name").isNull() ? user.get("name").asText() : null;
+                String avatarUrl = user.has("avatar_url") && !user.get("avatar_url").isNull() ? user.get("avatar_url").asText() : null;
+                String email = user.has("email") && !user.get("email").isNull() ? user.get("email").asText() : null;
 
-            ResponseEntity<String> emailsResponse = restTemplate.exchange(
-                    "https://api.github.com/user/emails",
-                    HttpMethod.GET,
-                    new HttpEntity<>(headers),
-                    String.class);
-
-            if (emailsResponse.getStatusCode().is2xxSuccessful() && emailsResponse.getBody() != null) {
-                JsonNode emails = objectMapper.readTree(emailsResponse.getBody());
-                for (JsonNode emailNode : emails) {
-                    if (emailNode.has("primary") && emailNode.get("primary").asBoolean()) {
-                        return emailNode.get("email").asText();
+                if (email == null) {
+                    ResponseEntity<String> emailsResponse = restTemplate.exchange(
+                            "https://api.github.com/user/emails",
+                            HttpMethod.GET,
+                            new HttpEntity<>(headers),
+                            String.class);
+                    if (emailsResponse.getStatusCode().is2xxSuccessful() && emailsResponse.getBody() != null) {
+                        JsonNode emails = objectMapper.readTree(emailsResponse.getBody());
+                        for (JsonNode emailNode : emails) {
+                            if (emailNode.has("primary") && emailNode.get("primary").asBoolean()) {
+                                email = emailNode.get("email").asText();
+                                break;
+                            }
+                        }
+                        if (email == null && emails.isArray() && emails.size() > 0) {
+                            email = emails.get(0).get("email").asText();
+                        }
                     }
                 }
-                if (emails.isArray() && emails.size() > 0) {
-                    return emails.get(0).get("email").asText();
+                if (githubId != null && email != null) {
+                    return new GithubUserProfile(email, githubId, githubUsername, name, avatarUrl);
                 }
             }
         } catch (Exception e) {
@@ -132,33 +138,16 @@ public class GithubOAuthService {
         return null;
     }
 
-    private String fetchGithubId(String accessToken) {
-        try {
-            HttpHeaders headers = new HttpHeaders();
-            headers.setBearerAuth(accessToken);
-            headers.setAccept(java.util.List.of(MediaType.APPLICATION_JSON));
-
-            ResponseEntity<String> response = restTemplate.exchange(
-                    "https://api.github.com/user",
-                    HttpMethod.GET,
-                    new HttpEntity<>(headers),
-                    String.class);
-
-            if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
-                JsonNode user = objectMapper.readTree(response.getBody());
-                return user.has("id") ? String.valueOf(user.get("id").asLong()) : null;
-            }
-        } catch (Exception e) {
-            // fall through
-        }
-        return null;
-    }
+    private record GithubUserProfile(String email, String githubId, String githubUsername, String name, String avatarUrl) {}
 
     public User findOrCreateUser(GithubAuthResult result) {
         Optional<User> byGithub = userRepository.findByGithubId(result.githubId());
         if (byGithub.isPresent()) {
             User user = byGithub.get();
             user.setGithubAccessToken(result.accessToken());
+            if (result.githubUsername() != null) user.setGithubUsername(result.githubUsername());
+            if (result.name() != null) user.setName(result.name());
+            if (result.avatarUrl() != null) user.setAvatarUrl(result.avatarUrl());
             return userRepository.save(user);
         }
 
@@ -167,13 +156,19 @@ public class GithubOAuthService {
             User user = byEmail.get();
             user.setGithubId(result.githubId());
             user.setGithubAccessToken(result.accessToken());
+            if (result.githubUsername() != null) user.setGithubUsername(result.githubUsername());
+            if (result.name() != null) user.setName(result.name());
+            if (result.avatarUrl() != null) user.setAvatarUrl(result.avatarUrl());
             return userRepository.save(user);
         }
 
         User user = new User();
         user.setEmail(result.email());
         user.setGithubId(result.githubId());
+        user.setGithubUsername(result.githubUsername());
         user.setGithubAccessToken(result.accessToken());
+        user.setName(result.name());
+        user.setAvatarUrl(result.avatarUrl());
         user.setPassword(""); // GitHub-only users; placeholder for UserDetails
         return userRepository.save(user);
     }
@@ -181,8 +176,11 @@ public class GithubOAuthService {
     public void linkGithubToUser(User user, GithubAuthResult result) {
         user.setGithubId(result.githubId());
         user.setGithubAccessToken(result.accessToken());
+        if (result.githubUsername() != null) user.setGithubUsername(result.githubUsername());
+        if (result.name() != null) user.setName(result.name());
+        if (result.avatarUrl() != null) user.setAvatarUrl(result.avatarUrl());
         userRepository.save(user);
     }
 
-    public record GithubAuthResult(String email, String githubId, String accessToken) {}
+    public record GithubAuthResult(String email, String githubId, String githubUsername, String name, String avatarUrl, String accessToken) {}
 }

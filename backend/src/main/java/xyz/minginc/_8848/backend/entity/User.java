@@ -20,8 +20,17 @@ public class User {
     @Column(unique = true, length = 64)
     private String githubId;
 
+    @Column(length = 128)
+    private String githubUsername;
+
     @Column(length = 512)
     private String githubAccessToken;
+
+    @Column(length = 255)
+    private String name;
+
+    @Column(length = 512)
+    private String avatarUrl;
 
     @Column(nullable = false, updatable = false)
     private Instant createdAt = Instant.now();
@@ -68,11 +77,35 @@ public class User {
         this.githubId = githubId;
     }
 
+    public String getGithubUsername() {
+        return githubUsername;
+    }
+
+    public void setGithubUsername(String githubUsername) {
+        this.githubUsername = githubUsername;
+    }
+
     public String getGithubAccessToken() {
         return githubAccessToken;
     }
 
     public void setGithubAccessToken(String githubAccessToken) {
         this.githubAccessToken = githubAccessToken;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getAvatarUrl() {
+        return avatarUrl;
+    }
+
+    public void setAvatarUrl(String avatarUrl) {
+        this.avatarUrl = avatarUrl;
     }
 }

@@ -71,8 +71,14 @@ export class AuthService {
     return !!this.getToken();
   }
 
+  /** Login/Sign up with GitHub via direct OAuth */
+  loginWithGithub(): void {
+    window.location.href = this.getGithubLoginUrl();
+  }
+
+  /** GitHub OAuth authorization URL (uses proxy in dev: /api -> backend) */
   getGithubLoginUrl(): string {
-    return `${this.backendUrl}/api/auth/github?state=login`;
+    return '/api/auth/github?state=login';
   }
 
   getGithubConnectUrl(): string {

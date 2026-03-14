@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, inject, afterNextRender, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
@@ -38,26 +38,32 @@ import { AuthService } from '../../services/auth.service';
     .auth-callback-link:hover { text-decoration: underline; }
   `],
 })
-export class AuthCallbackComponent implements OnInit {
+export class AuthCallbackComponent {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly authService = inject(AuthService);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   loading = true;
   error = '';
 
-  ngOnInit(): void {
-    const token = this.route.snapshot.queryParamMap.get('token');
-    const email = this.route.snapshot.queryParamMap.get('email');
+  constructor() {
+    // Run only in browser after render: localStorage doesn't exist during SSR.
+    // Without this, token isn't stored on server and auth guard redirects to login.
+    afterNextRender(() => {
+      const token = this.route.snapshot.queryParamMap.get('token');
+      const email = this.route.snapshot.queryParamMap.get('email');
 
-    if (token && email) {
-      this.authService.setToken(token);
-      this.authService.setEmail(email);
-      this.loading = false;
-      this.router.navigate(['/dashboard']);
-    } else {
-      this.error = this.route.snapshot.queryParamMap.get('error') ?? 'Authentication failed.';
-      this.loading = false;
-    }
+      if (token && email) {
+        this.authService.setToken(token);
+        this.authService.setEmail(email);
+        this.loading = false;
+        this.router.navigate(['/dashboard'], { replaceUrl: true });
+      } else {
+        this.error = this.route.snapshot.queryParamMap.get('error') ?? 'Authentication failed.';
+        this.loading = false;
+      }
+      this.cdr.markForCheck();
+    });
   }
 }

@@ -7,10 +7,10 @@
       <p class="auth-subtitle">Sign up with GitHub or use your email.</p>
 
       <div class="auth-social-first">
-        <a [href]="authService.getGithubLoginUrl()" class="auth-btn auth-btn-primary auth-btn-social">
+        <button type="button" class="auth-btn auth-btn-primary auth-btn-social" (click)="authService.loginWithGithub()">
           <ng-icon name="lucideGithub" class="auth-btn-icon" />
           Sign up with GitHub
-        </a>
+        </button>
       </div>
 
       <div class="auth-divider">

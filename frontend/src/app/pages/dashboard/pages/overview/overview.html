@@ -22,7 +22,11 @@
           }
         </button>
         @if (notificationOpen) {
-          <div class="notification-backdrop" (click)="closeNotifications()" aria-hidden="true"></div>
+          <div
+            class="notification-backdrop"
+            (click)="closeNotifications()"
+            aria-hidden="true"
+          ></div>
           <div class="notification-modal" role="dialog" aria-label="Notifications">
             <div class="notification-modal-header">
               <h3 class="notification-modal-title">Notifications</h3>
@@ -47,17 +51,32 @@
           </div>
         }
       </div>
-      <div class="view-switch" role="switch" [attr.aria-checked]="viewMode === 'grid'" aria-label="View mode">
-        <button type="button" class="view-switch-option" [class.active]="viewMode === 'list'" (click)="viewMode = 'list'" aria-label="List view">
+      <div
+        class="view-switch"
+        role="switch"
+        [attr.aria-checked]="viewMode === 'grid'"
+        aria-label="View mode"
+      >
+        <button
+          type="button"
+          class="view-switch-option"
+          [class.active]="viewMode === 'list'"
+          (click)="viewMode = 'list'"
+          aria-label="List view"
+        >
           <ng-icon name="lucideLayoutList" class="view-switch-icon" />
         </button>
-        <button type="button" class="view-switch-option" [class.active]="viewMode === 'grid'" (click)="viewMode = 'grid'" aria-label="Grid view">
+        <button
+          type="button"
+          class="view-switch-option"
+          [class.active]="viewMode === 'grid'"
+          (click)="viewMode = 'grid'"
+          aria-label="Grid view"
+        >
           <ng-icon name="lucideLayoutGrid" class="view-switch-icon" />
         </button>
       </div>
-      <a routerLink="/dashboard/new-project" class="header-add-btn">
-        Add New
-      </a>
+      <a routerLink="/dashboard/new-project" class="header-add-btn"> Add New </a>
     </div>
   </div>
 </header>
@@ -92,17 +111,19 @@
       </div>
     </section>
 
-
     <section class="previews-card">
       <h2 class="card-title">Recent Previews</h2>
+      <!-- <hr class="border-b  border-gray-500" /> -->
       <ul class="previews-list">
         @for (p of previews; track p.hash) {
           <li class="preview-item">
-            <div class="preview-avatar-wrap">
-              <img [src]="p.avatarUrl ?? defaultAvatarUrl" [alt]="p.title" class="preview-avatar" />
-            </div>
             <div class="preview-content">
               <div class="preview-header-row">
+                <img
+                  [src]="p.avatarUrl ?? defaultAvatarUrl"
+                  [alt]="p.title"
+                  class="preview-avatar"
+                />
                 <span class="preview-title">{{ p.title }}</span>
                 <button type="button" class="preview-menu-btn" aria-label="More options">
                   <ng-icon name="lucideMoreVertical" />
@@ -139,32 +160,26 @@
         @for (proj of projects; track proj.name) {
           <article class="project-card">
             <div class="project-card-header">
-              <div class="project-avatar-wrap">
-                <img [src]="proj.avatarUrl ?? defaultAvatarUrl" [alt]="proj.name" class="project-avatar-img" />
-              </div>
               <div class="project-meta">
-                <h3 class="project-name">{{ proj.name }}</h3>
-                <a [href]="'https://' + proj.domain" target="_blank" rel="noopener" class="project-domain">
-                  {{ proj.domain }}
-                  <ng-icon name="lucideExternalLink" class="project-link-icon" />
-                </a>
+                <img
+                  [src]="proj.avatarUrl ?? defaultAvatarUrl"
+                  [alt]="proj.name"
+                  class="project-avatar-img"
+                />
+                <div class="">
+                  <h3 class="project-name">{{ proj.name }}</h3>
+                  <a
+                    [href]="'https://' + proj.domain"
+                    target="_blank"
+                    rel="noopener"
+                    class="project-domain"
+                  >
+                    {{ proj.domain }}
+                    <ng-icon name="lucideExternalLink" class="project-link-icon" />
+                  </a>
+                </div>
               </div>
               <div class="project-card-actions">
-                @if (proj.score != null) {
-                  <span class="project-score-badge">{{ proj.score }}</span>
-                } @else if (proj.status === 'ready') {
-                  <span class="project-status-badge" title="Ready">
-                    <ng-icon name="lucideCheck" class="project-status-icon" />
-                  </span>
-                } @else if (proj.status === 'building') {
-                  <span class="project-status-badge building" title="Building">
-                    <ng-icon name="lucideActivity" class="project-status-icon" />
-                  </span>
-                } @else if (proj.status === 'error') {
-                  <span class="project-status-badge error" title="Error">
-                    <ng-icon name="lucideAlertTriangle" class="project-status-icon" />
-                  </span>
-                }
                 <button type="button" class="project-menu-btn" aria-label="More options">
                   <ng-icon name="lucideMoreVertical" />
                 </button>

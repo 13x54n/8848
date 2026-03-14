@@ -29,6 +29,27 @@
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
   --muted-foreground: oklch(0.556 0 0);
+  /* Dashboard light theme */
+  --dashboard-bg: #fafafa;
+  --dashboard-fg: #171717;
+  --dashboard-sidebar-bg: #fff;
+  --dashboard-border: rgba(0, 0, 0, 0.08);
+  --dashboard-border-strong: rgba(0, 0, 0, 0.12);
+  --dashboard-muted: #525252;
+  --dashboard-muted-faint: rgba(0, 0, 0, 0.4);
+  --dashboard-surface: rgba(0, 0, 0, 0.02);
+  --dashboard-surface-hover: rgba(0, 0, 0, 0.04);
+  --dashboard-surface-strong: rgba(0, 0, 0, 0.06);
+  --dashboard-input-bg: rgba(0, 0, 0, 0.04);
+  --dashboard-nav-fg: rgba(0, 0, 0, 0.7);
+  --dashboard-nav-hover-bg: rgba(0, 0, 0, 0.04);
+  --dashboard-nav-active-bg: rgba(0, 0, 0, 0.08);
+  --dashboard-nav-active-fg: #171717;
+  --dashboard-card-bg: rgba(0, 0, 0, 0.02);
+  --dashboard-modal-bg: #fff;
+  --dashboard-modal-border: rgba(0, 0, 0, 0.08);
+  --dashboard-btn-primary-bg: #171717;
+  --dashboard-btn-primary-fg: #fff;
 }
 
 /* Dark theme */
@@ -57,6 +78,27 @@
   --popover-foreground: oklch(0.98 0 0);
   --accent-foreground: oklch(0.98 0 0);
   --muted-foreground: oklch(0.65 0 0);
+  /* Dashboard dark theme */
+  --dashboard-bg: #0a0a0a;
+  --dashboard-fg: #fafafa;
+  --dashboard-sidebar-bg: #000;
+  --dashboard-border: rgba(255, 255, 255, 0.06);
+  --dashboard-border-strong: rgba(255, 255, 255, 0.1);
+  --dashboard-muted: rgba(255, 255, 255, 0.7);
+  --dashboard-muted-faint: rgba(255, 255, 255, 0.4);
+  --dashboard-surface: rgba(255, 255, 255, 0.02);
+  --dashboard-surface-hover: rgba(255, 255, 255, 0.04);
+  --dashboard-surface-strong: rgba(255, 255, 255, 0.06);
+  --dashboard-input-bg: rgba(255, 255, 255, 0.04);
+  --dashboard-nav-fg: rgba(255, 255, 255, 0.7);
+  --dashboard-nav-hover-bg: rgba(255, 255, 255, 0.06);
+  --dashboard-nav-active-bg: rgba(255, 255, 255, 0.06);
+  --dashboard-nav-active-fg: #fff;
+  --dashboard-card-bg: rgba(255, 255, 255, 0.03);
+  --dashboard-modal-bg: #171717;
+  --dashboard-modal-border: rgba(255, 255, 255, 0.1);
+  --dashboard-btn-primary-bg: #fff;
+  --dashboard-btn-primary-fg: #0a0a0a;
 }
 
 /* Remove white border from spartan navigation menu dropdowns */
@@ -69,6 +111,23 @@ hlm-navigation-menu-content {
 .dark [data-slot='navigation-menu-content'],
 .dark hlm-navigation-menu-content {
   background: var(--popover) !important;
+  color: var(--popover-foreground) !important;
+}
+
+/* Navbar dropdown links - readable highlights instead of accent (white on orange is hard to read) */
+[data-slot='navigation-menu-content'] a:hover,
+[data-slot='navigation-menu-content'] a:focus,
+hlm-navigation-menu-content a:hover,
+hlm-navigation-menu-content a:focus {
+  background: rgba(0, 0, 0, 0.06) !important;
+  color: inherit !important;
+}
+
+.dark [data-slot='navigation-menu-content'] a:hover,
+.dark [data-slot='navigation-menu-content'] a:focus,
+.dark hlm-navigation-menu-content a:hover,
+.dark hlm-navigation-menu-content a:focus {
+  background: rgba(255, 255, 255, 0.1) !important;
   color: var(--popover-foreground) !important;
 }
 

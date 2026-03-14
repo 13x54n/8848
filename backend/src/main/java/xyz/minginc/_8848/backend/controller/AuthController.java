@@ -143,8 +143,11 @@ public class AuthController {
 
         User user = githubOAuthService.findOrCreateUser(result);
         String token = jwtService.generateToken(user.getEmail());
+        String email = user.getEmail();
 
-        response.sendRedirect(frontendUrl + "/auth/callback?token=" + token + "&email=" + user.getEmail());
+        String callbackUrl = frontendUrl + "/auth/callback?token=" + java.net.URLEncoder.encode(token, java.nio.charset.StandardCharsets.UTF_8)
+                + "&email=" + java.net.URLEncoder.encode(email, java.nio.charset.StandardCharsets.UTF_8);
+        response.sendRedirect(callbackUrl);
     }
 
     private String getConnectTokenFromCookie(jakarta.servlet.http.HttpServletRequest request) {

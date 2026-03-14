@@ -3,32 +3,39 @@
 
   <!-- Hero Section -->
   <section class="hero">
-    <p class="hero-tagline">Ming Open Web HQ 2026 — AI, Cloud, and more.</p>
+    <p class="hero-tagline">Ming Open Web HQ 2026 — AI, Cloud, and Web.</p>
     <h1 class="hero-title">
       Build faster with AI,<br/> Ship <span class="accent">10x</span> with us.
     </h1>
     <p class="hero-subtitle">
-      CloudDeploy is easy to adopt and comes with versatile caching features to support high traffic
-      websites while uncovering new opportunities.
+      Ming Open Web HQ offers developers the platforms and cloud resources needed to create, expand, and safeguard a faster, more customized web experience.
     </p>
     <div class="hero-cta">
-      <a href="#" class="btn btn-primary">View Next.js Demo</a>
-      <a href="#" class="btn btn-ghost">Request a Demo <span class="arrow">→</span></a>
+      <a href="#" class="btn btn-primary flex items-center gap-2">Start Shipping <span class="text-2xl">🚀</span></a>
+      <a href="#" class="btn btn-ghost">View Pricing <span class="arrow">→</span></a>
     </div>
   </section>
 
   <!-- Deploy CTA + Templates Section -->
-  <section class="deploy-section">
+  <section class="deploy-section" appViewportAnimate variant="fade-up">
     <div class="deploy-content">
       <div class="deploy-right">
         <div class="template-grid">
-          @for (template of templates; track template.name) {
-            <a [href]="template.href" class="template-card">
+          @for (template of templates; track template.name; let i = $index) {
+            <a [href]="template.href" class="template-card" appViewportAnimate variant="scale" [stagger]="i">
               <span class="template-corner"></span>
-              <div class="template-logo">
-                <img [src]="getLogo(template)" [alt]="template.name" />
+              <div class="template-logo" [class.template-logo-stack]="getLogos(template).length > 1">
+                @let logos = getLogos(template);
+                @let visible = logos.slice(0, 4);
+                @let extra = logos.length > 4 ? logos.length - 4 : 0;
+                @for (logo of visible; track logo; let i = $index) {
+                  <img [src]="logo" [alt]="template.name" class="template-logo-img" [style.z-index]="i + 1" />
+                }
+                @if (extra > 0) {
+                  <span class="template-logo-extra">+{{ extra }}</span>
+                }
               </div>
-              <span class="template-label">{{ template.name }} Templates</span>
+              <span class="template-label">{{ template.name }}</span>
             </a>
           }
         </div>
@@ -41,70 +48,21 @@
         <ul class="deploy-features">
           <li class="deploy-feature">
             <span class="deploy-feature-icons">
-              <img src="https://cdn.simpleicons.org/github/171515" alt="" class="deploy-icon" />
-              <img src="https://cdn.simpleicons.org/gitlab/fc6d26" alt="" class="deploy-icon" />
-              <svg
-                class="deploy-icon"
-                xmlns="http://www.w3.org/2000/svg"
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-              >
-                <rect x="4" y="4" width="16" height="16" rx="2" />
-                <path d="M9 9h6M9 13h6M9 17h4" />
-              </svg>
+              <img [src]="getDeployIcon('github')" alt="" class="deploy-icon" />
+              
             </span>
             <span>Deploy automatically from git or with our CLI</span>
           </li>
           <li class="deploy-feature">
-            <svg
-              class="deploy-feature-icon"
-              xmlns="http://www.w3.org/2000/svg"
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-            >
-              <rect x="2" y="3" width="20" height="14" rx="2" />
-              <path d="M8 21h8M12 17v4" />
-            </svg>
+            <p class="text-2xl">🚀</p>
             <span>Wide range support for the most popular frameworks</span>
           </li>
           <li class="deploy-feature">
-            <svg
-              class="deploy-feature-icon"
-              xmlns="http://www.w3.org/2000/svg"
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-            >
-              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-              <circle cx="12" cy="12" r="3" />
-            </svg>
+            <p class="text-2xl">🔍</p>
             <span>Previews for every push</span>
           </li>
           <li class="deploy-feature">
-            <svg
-              class="deploy-feature-icon"
-              xmlns="http://www.w3.org/2000/svg"
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-            >
-              <rect x="3" y="11" width="18" height="11" rx="2" />
-              <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-            </svg>
+            <p class="text-2xl">🔒</p>
             <span>Automatic HTTPS for all your domains</span>
           </li>
         </ul>
@@ -112,6 +70,136 @@
     </div>
   </section>
 
+  <!-- Primitives Section -->
+  <section class="primitives-section" appViewportAnimate variant="fade-up">
+    <div class="primitives-inner">
+      <p class="primitives-tagline">PRIMITIVES</p>
+      <h2 class="primitives-title">Ready to use building blocks.</h2>
+      <p class="primitives-subtitle">
+        Build APIs, store files, manage data, control performance. No backend setup required—just build and deploy.
+      </p>
+
+      <div class="primitives-tabs-container">
+        <div class="primitives-tabs">
+          @for (p of primitives; track p.id; let i = $index) {
+            <button
+              type="button"
+              class="primitives-tab"
+              [class.primitives-tab-active]="selectedPrimitive() === i"
+              (click)="selectedPrimitive.set(i)"
+            >
+              <span class="primitives-tab-icon">{{ p.icon }}</span>
+              <span>{{ p.label }}</span>
+            </button>
+          }
+        </div>
+        <div class="primitives-content">
+          @let p = primitives[selectedPrimitive()];
+          <div class="primitives-panel-left">
+            <h3 class="primitives-headline">{{ p.headline }}</h3>
+            <p class="primitives-desc">{{ p.description }}</p>
+            <ul class="primitives-checklist">
+              @for (item of p.checklist; track item) {
+                <li class="primitives-check-item">
+                  <span class="primitives-check">✓</span>
+                  <span>{{ item }}</span>
+                </li>
+              }
+            </ul>
+            <a [href]="p.ctaLink" class="primitives-cta">{{ p.ctaText }}</a>
+          </div>
+          <div class="primitives-panel-right">
+            <p class="primitives-code-title">EXAMPLE: {{ p.codeTitle }}</p>
+            <pre class="primitives-code"><code>{{ p.code }}</code></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pricing Section -->
+  <section class="landing-pricing" appViewportAnimate variant="fade-up">
+    <header class="pricing-header">
+      <h2 class="pricing-title">Find a plan to power your apps.</h2>
+      <p class="pricing-subtitle">
+        CloudDeploy supports teams of all sizes, with pricing that scales.
+      </p>
+    </header>
+
+    <div class="pricing-grid">
+      @for (plan of plans; track plan.name; let i = $index) {
+        <div class="pricing-card pricing-card-designed" appViewportAnimate variant="fade-up" [stagger]="i" [class.pricing-card-popular]="plan.popular" [class.pricing-card-gradient]="plan.ctaVariant === 'gradient'" [class.pricing-card-dark]="plan.ctaVariant === 'dark'">
+          @if (plan.popular) {
+            <span class="pricing-badge">Popular</span>
+          }
+          <h3 class="plan-name">{{ plan.name }}</h3>
+          <div class="plan-price">
+            <span class="price-value">{{ plan.price }}</span>
+            @if (plan.priceNote) {
+              <span class="price-note">{{ plan.priceNote }}</span>
+            }
+          </div>
+          <p class="plan-description">{{ plan.description }}</p>
+          <ul class="plan-features">
+            @for (feature of plan.features; track feature.title) {
+              <li class="plan-feature">
+                <svg class="feature-check" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M20 6 9 17l-5-5"/>
+                </svg>
+                <div class="plan-feature-content">
+                  <span class="plan-feature-title">{{ feature.title }}</span>
+                  <span class="plan-feature-desc">{{ feature.desc }}</span>
+                </div>
+              </li>
+            }
+          </ul>
+          <div class="plan-cta">
+            <a routerLink="/pricing" class="pricing-cta-btn" [class.pricing-cta-gradient]="plan.ctaVariant === 'gradient'" [class.pricing-cta-dark]="plan.ctaVariant === 'dark'">
+              {{ plan.cta }}
+              <span class="btn-arrow">→</span>
+            </a>
+          </div>
+        </div>
+      }
+    </div>
+
+    <div class="landing-pricing-cta">
+      <a routerLink="/pricing" class="text-underline">Compare all features <span class="btn-arrow">→</span></a>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="landing-faq" appViewportAnimate variant="fade-up">
+    <h2 class="faq-title mb-4">Frequently asked questions.</h2>
+      <div class="mt-4">
+        @for (item of faqItems; track item.question; let i = $index) {
+          <button
+            type="button"
+            class="faq-item"
+            (click)="toggleFaq(i)"
+            [attr.aria-expanded]="expandedFaq() === i"
+          >
+            <span class="faq-question">{{ item.question }}</span>
+            <svg
+              class="faq-chevron"
+              [class.faq-chevron-open]="expandedFaq() === i"
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path d="m6 9 6 6 6-6"/>
+            </svg>
+          </button>
+          @if (expandedFaq() === i) {
+            <div class="faq-answer">{{ item.answer }}</div>
+          }
+        }
+      </div>
+  </section>
 
   <!-- Footer -->
   <footer class="footer">

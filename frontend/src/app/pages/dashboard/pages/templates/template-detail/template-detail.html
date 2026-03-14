@@ -1,0 +1,127 @@
+@if (template(); as t) {
+  <div class="template-detail-page">
+    <header class="template-detail-header">
+      <a routerLink="/dashboard/templates" class="template-detail-back">
+        <ng-icon name="lucideArrowLeft" class="template-detail-back-icon" />
+        Back to Templates
+      </a>
+      <div class="template-detail-title-row">
+        <div>
+          <h1 class="template-detail-title">{{ t.title }}</h1>
+          <p class="template-detail-desc">{{ t.description }}</p>
+        </div>
+        <div class="template-detail-actions">
+          <button type="button" class="template-detail-btn template-detail-btn-primary" (click)="deployTemplate()">
+            Deploy
+          </button>
+          @if (t.demoUrl) {
+            <a [href]="t.demoUrl" target="_blank" rel="noopener" class="template-detail-btn template-detail-btn-outline">
+              View Demo
+            </a>
+          }
+        </div>
+      </div>
+    </header>
+
+    <div class="template-detail-body">
+      <main class="template-detail-main">
+        <section class="template-detail-preview">
+          <div class="template-detail-preview-box">
+            <img [src]="t.previewImage" [alt]="t.title" class="template-detail-preview-img" />
+          </div>
+        </section>
+
+        <section class="template-detail-section">
+          <p class="template-detail-overview">
+            This is a {{ t.title }} project. Clone the repository and deploy to get started.
+          </p>
+        </section>
+
+        <section class="template-detail-section">
+          <h2 class="template-detail-section-title">Getting Started</h2>
+          <h3 class="template-detail-section-subtitle">First, run the development server:</h3>
+          <pre class="template-detail-code"><code>npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev</code></pre>
+          <p class="template-detail-instruction">
+            Open <a href="http://localhost:3000" target="_blank" rel="noopener" class="template-detail-link">http://localhost:3000</a> with your browser to see the result.
+          </p>
+          <p class="template-detail-instruction">
+            You can start editing the page by modifying <code>app/page.tsx</code>. The page auto-updates as you edit the file.
+          </p>
+        </section>
+
+        <section class="template-detail-section">
+          <h2 class="template-detail-section-title">Learn More</h2>
+          <p class="template-detail-instruction">To learn more about {{ t.title }}, take a look at the following resources:</p>
+          <ul class="template-detail-links">
+            <li><a [href]="t.repoUrl" target="_blank" rel="noopener" class="template-detail-link">Documentation</a></li>
+            <li><a [href]="t.repoUrl" target="_blank" rel="noopener" class="template-detail-link">Learn {{ t.title }} - interactive tutorial</a></li>
+            <li><a [href]="t.repoUrl" target="_blank" rel="noopener" class="template-detail-link">GitHub repository</a></li>
+          </ul>
+        </section>
+
+        <section class="template-detail-section">
+          <h2 class="template-detail-section-title">Deploy on Vercel</h2>
+          <p class="template-detail-instruction">
+            The easiest way to deploy your app is to use the Vercel Platform. Check out the deployment documentation for more details.
+          </p>
+        </section>
+
+        @if (relatedTemplates().length > 0) {
+          <section class="template-detail-section">
+            <h2 class="template-detail-section-title">Related Templates</h2>
+            <div class="template-detail-related">
+              @for (r of relatedTemplates(); track r.id) {
+                <a [routerLink]="['/dashboard/templates', r.id]" class="template-detail-related-card">
+                  <span class="template-detail-related-title">{{ r.title }}</span>
+                </a>
+              }
+            </div>
+          </section>
+        }
+      </main>
+
+      <aside class="template-detail-sidebar">
+        <div class="template-detail-sidebar-section">
+          <h3 class="template-detail-sidebar-title">GitHub Repo</h3>
+          @if (t.repoUrl) {
+            <a [href]="t.repoUrl" target="_blank" rel="noopener" class="template-detail-link">
+              {{ getRepoDisplay(t) }}
+              <ng-icon name="lucideExternalLink" class="template-detail-link-icon" />
+            </a>
+          } @else {
+            <span class="template-detail-muted">—</span>
+          }
+        </div>
+        <div class="template-detail-sidebar-section">
+          <h3 class="template-detail-sidebar-title">Use Cases</h3>
+          <div class="template-detail-tags">
+            @for (uc of t.useCases; track uc) {
+              <span class="template-detail-tag">{{ uc }}</span>
+            }
+          </div>
+        </div>
+        @if (t.stack && t.stack.length > 0) {
+          <div class="template-detail-sidebar-section">
+            <h3 class="template-detail-sidebar-title">Stack</h3>
+            <div class="template-detail-tags">
+              @for (s of t.stack; track s) {
+                <span class="template-detail-tag">{{ s }}</span>
+              }
+            </div>
+          </div>
+        }
+      </aside>
+    </div>
+  </div>
+} @else {
+  <div class="template-detail-page">
+    <a routerLink="/dashboard/templates" class="template-detail-back">Back to Templates</a>
+    <p class="template-detail-not-found">Template not found.</p>
+  </div>
+}

@@ -15,6 +15,10 @@ import { DashboardUsageComponent } from './pages/dashboard/pages/usage/usage';
 import { DashboardSupportComponent } from './pages/dashboard/pages/support/support';
 import { DashboardSettingsComponent } from './pages/dashboard/pages/settings/settings';
 import { DashboardNewProjectComponent } from './pages/dashboard/pages/new-project/new-project';
+import { DashboardDeployingComponent } from './pages/dashboard/pages/deploying/deploying';
+import { DashboardTemplatesComponent } from './pages/dashboard/pages/templates/templates';
+import { TemplateDetailComponent } from './pages/dashboard/pages/templates/template-detail/template-detail';
+import { DashboardRedirectComponent } from './pages/dashboard/dashboard-redirect';
 import { AuthCallbackComponent } from './pages/auth-callback/auth-callback';
 import { authGuard } from './guards/auth.guard';
 import { guestGuard } from './guards/guest.guard';
@@ -30,9 +34,12 @@ export const routes: Routes = [
     component: DashboardLayoutComponent,
     canActivate: [authGuard],
     children: [
-      { path: '', redirectTo: 'overview', pathMatch: 'full' },
+      { path: '', pathMatch: 'full', component: DashboardRedirectComponent },
       { path: 'overview', component: DashboardOverviewComponent },
       { path: 'new-project', component: DashboardNewProjectComponent },
+      { path: 'deploying', component: DashboardDeployingComponent },
+      { path: 'templates', component: DashboardTemplatesComponent },
+      { path: 'templates/:id', component: TemplateDetailComponent },
       { path: 'usage', component: DashboardUsageComponent },
       { path: 'projects', component: DashboardProjectsComponent },
       { path: 'analytics', component: DashboardAnalyticsComponent },

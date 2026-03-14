@@ -1,0 +1,64 @@
+<div class="templates-page">
+  <header class="templates-header">
+    <a routerLink="/dashboard/new-project" class="templates-back">
+      <ng-icon name="lucideArrowLeft" class="templates-back-icon" />
+      Back
+    </a>
+  </header>
+
+  <div class="templates-hero">
+    <h1 class="templates-title">Find your Template</h1>
+    <p class="templates-subtitle">Jumpstart your app development process with pre-built solutions from Vercel and our community.</p>
+    <div class="templates-search-wrap">
+      <ng-icon name="lucideSearch" class="templates-search-icon" />
+      <input
+        type="text"
+        class="templates-search-input"
+        placeholder="Search templates..."
+        [ngModel]="searchQuery()"
+        (ngModelChange)="searchQuery.set($event)"
+      />
+    </div>
+  </div>
+
+  <div class="templates-body">
+    <aside class="templates-sidebar">
+      <h3 class="templates-filter-title">Filter Templates</h3>
+      <div class="templates-filter-section">
+        <button type="button" class="templates-filter-toggle" (click)="useCaseExpanded.set(!useCaseExpanded())">
+          <ng-icon [name]="useCaseExpanded() ? 'lucideChevronDown' : 'lucideChevronRight'" class="templates-filter-chevron" />
+          Use Case
+        </button>
+        @if (useCaseExpanded()) {
+          <div class="templates-filter-options">
+            @for (uc of useCases; track uc) {
+              <label class="templates-filter-option">
+                <input type="checkbox" [checked]="isUseCaseChecked(uc)" (change)="toggleUseCase(uc)" />
+                <span>{{ uc }}</span>
+              </label>
+            }
+          </div>
+        }
+      </div>
+    </aside>
+
+    <main class="templates-main">
+      <div class="templates-grid">
+        @for (t of filteredTemplates(); track t.id) {
+          <article class="templates-card" (click)="selectTemplate(t)">
+            <div class="templates-card-thumb">
+              <img [src]="t.thumbnail" [alt]="t.title" class="templates-card-img" />
+            </div>
+            <div class="templates-card-body">
+              <h4 class="templates-card-title">{{ t.title }}</h4>
+              <p class="templates-card-desc">{{ t.description }}</p>
+            </div>
+          </article>
+        }
+      </div>
+      @if (filteredTemplates().length === 0) {
+        <div class="templates-empty">No templates match your filters. Try adjusting your search or filters.</div>
+      }
+    </main>
+  </div>
+</div>
