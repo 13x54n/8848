@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, inject, OnInit, OnDestroy } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnInit, OnDestroy, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -18,6 +18,9 @@ import {
   lucideChevronRight,
   lucideChevronUp,
   lucideAlertTriangle,
+  lucideClock,
+  lucideGlobe,
+  lucideZap,
 } from '@ng-icons/lucide';
 import { HlmIconImports } from '@spartan-ng/helm/icon';
 import { AuthService } from '../../../../services/auth.service';
@@ -27,6 +30,19 @@ import { DeploymentService } from '../../../../services/deployment.service';
 import { TEMPLATES } from '../../../../data/templates.data';
 
 const DEFAULT_AVATAR_URL = 'https://avatars.githubusercontent.com/u/179059125?s=200&v=4';
+
+type DeployStage = 'idle' | 'preparing' | 'deploying' | 'success';
+
+const BUILD_LOGS = [
+  'Running build in Washington, D.C., USA (East) - iad1',
+  'Build machine configuration: 2 cores, 8 GB',
+  'Cloning github.com/{repo} (Branch: main)',
+  'Previous build caches not available.',
+  'Cloning completed: 325.000ms',
+  'Running "vercel build"',
+  'Vercel CLI 50.32.4',
+  'Installing dependencies ...',
+];
 
 interface Template {
   title: string;
@@ -52,9 +68,12 @@ interface Template {
       lucideGitBranch,
       lucideFolder,
       lucideChevronRight,
-      lucideChevronUp,
-      lucideAlertTriangle,
-    }),
+    lucideChevronUp,
+    lucideAlertTriangle,
+    lucideClock,
+    lucideGlobe,
+    lucideZap,
+  }),
   ],
   templateUrl: './new-project.html',
   styleUrls: ['./new-project.css', '../../dashboard.css'],
@@ -100,6 +119,27 @@ export class DashboardNewProjectComponent implements OnInit, OnDestroy {
   protected gitScopeDropdownOpen = false;
   protected selectedTeam = { label: "Your projects", plan: 'Hobby' };
   protected selectedGitScope = { label: 'Your account', icon: 'lucideGithub' };
+
+  protected readonly deploymentStage = signal<DeployStage>('idle');
+  protected readonly deployStartedAt = signal<number>(0);
+  protected readonly buildLogsExpanded = signal(true);
+  protected readonly deploySummaryExpanded = signal(false);
+  protected readonly domainsExpanded = signal(false);
+
+  protected readonly deployCtx = computed(() => this.deploymentService.context());
+  protected readonly teamLabel = computed(() => {
+    const email = this.authService.getEmail();
+    const username = email?.split('@')[0] ?? 'Your';
+    return `${username}'s projects`;
+  });
+  protected readonly elapsedSeconds = computed(() => {
+    const start = this.deployStartedAt();
+    if (!start) return 0;
+    return Math.floor((Date.now() - start) / 1000);
+  });
+
+  private deploymentTimers: ReturnType<typeof setTimeout>[] = [];
+  private deploymentTickInterval: ReturnType<typeof setInterval> | null = null;
 
   protected readonly applicationPresets = [
     'Angular',
@@ -209,6 +249,10 @@ export class DashboardNewProjectComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.searchSub?.unsubscribe();
+    this.deploymentTimers.forEach((t) => clearTimeout(t));
+    if (this.deploymentTickInterval) {
+      clearInterval(this.deploymentTickInterval);
+    }
   }
 
   private setupSearch(): void {
@@ -436,7 +480,7 @@ export class DashboardNewProjectComponent implements OnInit, OnDestroy {
       commitHash: '1ae57b',
       projectTitle,
     });
-    this.router.navigate(['/dashboard/deploying']);
+    this.startDeployment();
   }
 
   protected deployFromTemplate(): void {
@@ -457,7 +501,42 @@ export class DashboardNewProjectComponent implements OnInit, OnDestroy {
       previewImage,
       projectTitle: t.title,
     });
-    this.router.navigate(['/dashboard/deploying']);
+    this.startDeployment();
+  }
+
+  private startDeployment(): void {
+    this.deploymentStage.set('preparing');
+    this.deployStartedAt.set(Date.now());
+    this.deploymentTickInterval = setInterval(() => this.cdr.markForCheck(), 1000);
+    this.deploymentTimers.push(
+      setTimeout(() => this.deploymentStage.set('deploying'), 2500),
+      setTimeout(() => {
+        this.deploymentStage.set('success');
+        if (this.deploymentTickInterval) {
+          clearInterval(this.deploymentTickInterval);
+          this.deploymentTickInterval = null;
+        }
+      }, 8000)
+    );
+    this.cdr.markForCheck();
+  }
+
+  protected getBuildLogs(): string[] {
+    const ctx = this.deployCtx();
+    const repo = ctx?.source === 'template' ? (ctx?.teamName ?? 'user') + '/' + (ctx?.projectName ?? 'nextjs-boilerplate') : ctx?.sourceRepo ?? 'user/repo';
+    return BUILD_LOGS.map((line) => line.replace('{repo}', repo));
+  }
+
+  protected continueToDashboard(): void {
+    this.deploymentService.clearContext();
+    this.deploymentStage.set('idle');
+    this.deploymentTimers.forEach((t) => clearTimeout(t));
+    this.deploymentTimers = [];
+    if (this.deploymentTickInterval) {
+      clearInterval(this.deploymentTickInterval);
+      this.deploymentTickInterval = null;
+    }
+    this.router.navigate(['/dashboard/overview']);
   }
 
   private parseRepoFromUrl(url?: string): string | null {

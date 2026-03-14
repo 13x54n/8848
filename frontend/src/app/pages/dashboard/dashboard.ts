@@ -95,9 +95,9 @@ export class DashboardComponent {
   protected readonly navItems: NavItem[] = [
     { label: 'Projects', icon: 'lucideBox', href: '#' },
 
-    { label: 'Analytics', icon: 'lucideBarChart3', href: '#' },
-    { label: 'Speed Insights', icon: 'lucideGauge', href: '#' },
-    { label: 'CDN', icon: 'lucideGlobe', href: '#' },
+    // { label: 'Analytics', icon: 'lucideBarChart3', href: '#' },
+    // { label: 'Speed Insights', icon: 'lucideGauge', href: '#' },
+    // { label: 'CDN', icon: 'lucideGlobe', href: '#' },
     { label: 'Storage', icon: 'lucideDatabase', href: '#' },
     { label: 'Agent', icon: 'lucideUser', href: '#' },
     { label: 'Usage', icon: 'lucideGauge', href: '#', active: true },
