@@ -63,7 +63,7 @@
           <label class="config-label">Root Directory</label>
           <div class="config-input-row">
             <input type="text" class="config-input" [(ngModel)]="rootDirectory" />
-            <button type="button" class="config-edit-btn">Edit</button>
+            <button type="button" class="config-edit-btn" (click)="openRootDirModal()">Edit</button>
           </div>
         </div>
         <div class="config-collapse">
@@ -72,7 +72,47 @@
             Build and Output Settings
           </button>
           @if (buildExpanded) {
-            <div class="config-collapse-content">Configure build command, output directory, etc.</div>
+            <div class="config-collapse-content config-build-settings">
+              <div class="config-build-field">
+                <label class="config-build-label">
+                  Build Command
+                  <ng-icon name="lucideInfo" class="config-info-icon" />
+                </label>
+                <div class="config-build-input-row">
+                  <input type="text" class="config-input" [(ngModel)]="buildCommand" placeholder="'npm run vercel-build' or 'npm run build'" />
+                  <label class="config-toggle">
+                    <input type="checkbox" [(ngModel)]="useDefaultBuild" />
+                    <span class="config-toggle-slider"></span>
+                  </label>
+                </div>
+              </div>
+              <div class="config-build-field">
+                <label class="config-build-label">
+                  Output Directory
+                  <ng-icon name="lucideInfo" class="config-info-icon" />
+                </label>
+                <div class="config-build-input-row">
+                  <input type="text" class="config-input" [(ngModel)]="outputDirectory" placeholder="'public' if it exists, or '.'" />
+                  <label class="config-toggle">
+                    <input type="checkbox" [(ngModel)]="useDefaultOutput" />
+                    <span class="config-toggle-slider"></span>
+                  </label>
+                </div>
+              </div>
+              <div class="config-build-field">
+                <label class="config-build-label">
+                  Install Command
+                  <ng-icon name="lucideInfo" class="config-info-icon" />
+                </label>
+                <div class="config-build-input-row">
+                  <input type="text" class="config-input" [(ngModel)]="installCommand" placeholder="'yarn install', 'pnpm install', 'npm install', or 'bun install'" />
+                  <label class="config-toggle">
+                    <input type="checkbox" [(ngModel)]="useDefaultInstall" />
+                    <span class="config-toggle-slider"></span>
+                  </label>
+                </div>
+              </div>
+            </div>
           }
         </div>
         <div class="config-collapse">
@@ -81,7 +121,35 @@
             Environment Variables
           </button>
           @if (envExpanded) {
-            <div class="config-collapse-content">Add environment variables for your project.</div>
+            <div class="config-collapse-content config-env-vars">
+              <div class="config-env-table">
+                <div class="config-env-header">
+                  <span class="config-env-col-key">Key</span>
+                  <span class="config-env-col-value">
+                    Value
+                    <ng-icon name="lucideInfo" class="config-info-icon" />
+                  </span>
+                </div>
+                @for (ev of envVars; track $index) {
+                  <div class="config-env-row">
+                    <input type="text" class="config-input config-env-input" [(ngModel)]="ev.key" placeholder="Key" />
+                    <input type="text" class="config-input config-env-input" [(ngModel)]="ev.value" placeholder="Value" />
+                    <button type="button" class="config-env-remove" (click)="removeEnvVar($index)" aria-label="Remove">
+                      <ng-icon name="lucideMinus" class="config-env-remove-icon" />
+                    </button>
+                  </div>
+                }
+              </div>
+              <button type="button" class="config-env-add" (click)="addEnvVar()">
+                <ng-icon name="lucidePlus" class="config-env-add-icon" />
+                Add More
+              </button>
+              <button type="button" class="config-env-import">
+                <ng-icon name="lucideFileText" class="config-env-import-icon" />
+                Import .env
+              </button>
+              <p class="config-env-hint">or paste the .env contents above. <a href="#" class="config-env-link">Learn more</a></p>
+            </div>
           }
         </div>
       </div>
@@ -104,7 +172,7 @@
           }
           @case ('preparing') {
             @if (deployCtx(); as c) {
-              <p class="config-deploy-status">Preparing Git Repository...</p>
+              <p class="config-deploy-status">Preparing Git Repository... @if (deployStartedAtStr()) { (started {{ deployStartedAtStr() }}) }</p>
               <div class="config-deploy-clone-diagram">
                 <div class="config-deploy-clone-folder">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -124,7 +192,7 @@
           @case ('deploying') {
             <p class="config-deploy-status config-deploy-status-spinner">
               <span class="config-deploy-spinner"></span>
-              Deployment started {{ elapsedSeconds() }}s ago...
+              Started at {{ deployStartedAtStr() }} · {{ elapsedSeconds() }}s elapsed
             </p>
             <div class="config-deploy-sections">
               <div class="config-deploy-section">
@@ -148,9 +216,12 @@
                     </div>
                     <div class="config-deploy-logs-body">
                       @for (line of getBuildLogs(); track $index) {
+                        @let parsed = parseLogLine(line);
                         <div class="config-deploy-log-line">
-                          <span class="config-deploy-log-time">16:53:0{{ $index }}.{{ 800 + $index * 100 }}</span>
-                          <span class="config-deploy-log-text">{{ line }}</span>
+                          @if (parsed.time) {
+                            <span class="config-deploy-log-time">{{ parsed.time }}</span>
+                          }
+                          <span class="config-deploy-log-text">{{ parsed.text }}</span>
                         </div>
                       }
                     </div>
@@ -178,6 +249,7 @@
             <div class="config-deploy-success">
               <h2 class="config-deploy-success-title">Congratulations!</h2>
               <p class="config-deploy-success-subtitle">You just deployed a new project to 🌎 {{ teamLabel() }}.</p>
+              <p class="config-deploy-timestamps">Started {{ deployStartedAtStr() }} · Ended {{ deployEndedAtStr() }} · Duration {{ elapsedSeconds() }}s</p>
               @if (deployCtx()?.previewImage) {
                 <div class="config-deploy-success-card">
                   <div class="config-deploy-success-card-preview">
@@ -217,12 +289,66 @@
               <button type="button" class="config-deploy-continue-btn" (click)="continueToDashboard()">Continue to Dashboard</button>
             </div>
           }
+          @case ('failed') {
+            <div class="config-deploy-failed">
+              <h2 class="config-deploy-failed-title">Deployment Failed</h2>
+              @if (deployStartedAtStr()) {
+                <p class="config-deploy-timestamps">Started {{ deployStartedAtStr() }} · Ended {{ deployEndedAtStr() }} · Duration {{ elapsedSeconds() }}s</p>
+              }
+              <p class="config-deploy-failed-message">{{ deploymentError() }}</p>
+              <div class="config-deploy-failed-actions">
+                <button type="button" class="config-deploy-retry-btn" (click)="resetDeployment()">Try Again</button>
+                @if (isAuthError()) {
+                  <a routerLink="/login" class="config-deploy-login-link">Log in again</a>
+                }
+              </div>
+            </div>
+          }
         }
       </section>
       @if (deploymentStage() === 'idle') {
         <div class="config-footer-links">
           <button type="button" class="config-footer-link" (click)="clearSelection()">Import a different Git Repository →</button>
           <a routerLink="/dashboard/templates" class="config-footer-link">Browse Templates →</a>
+        </div>
+      }
+      @if (deploymentStage() === 'failed') {
+        <div class="config-footer-links">
+          <button type="button" class="config-footer-link" (click)="resetDeployment()">Try Again</button>
+          <a routerLink="/dashboard/templates" class="config-footer-link">Browse Templates →</a>
+        </div>
+      }
+
+      @if (rootDirModalOpen) {
+        <div class="config-modal-backdrop" (click)="closeRootDirModal()"></div>
+        <div class="config-modal config-root-dir-modal">
+          <h3 class="config-modal-title">Root Directory</h3>
+          <p class="config-modal-desc">Select the directory containing your source code. For monorepos, create a separate project for each directory you want to deploy.</p>
+          <div class="config-root-dir-tree">
+            <div class="config-root-dir-repo">
+              <ng-icon name="lucideGithub" class="config-root-dir-repo-icon" />
+              <span>{{ getRootDirRepoName() }}</span>
+            </div>
+            @for (item of rootDirTree; track item.id) {
+              <button type="button" class="config-root-dir-item" [class.selected]="rootDirectory === item.path || (item.path === './' && rootDirectory === './')" (click)="selectRootDir(item.path)">
+                <span class="config-root-dir-radio" [class.checked]="rootDirectory === item.path || (item.path === './' && rootDirectory === './')"></span>
+                @if (item.expandable) {
+                  <ng-icon name="lucideChevronRight" class="config-root-dir-chevron" />
+                }
+                <span class="config-root-dir-label">{{ item.label }}</span>
+                @if (item.hasWarning) {
+                  <ng-icon name="lucideAlertTriangle" class="config-root-dir-warn" />
+                }
+                @if (item.hasAlert) {
+                  <span class="config-root-dir-alert">A</span>
+                }
+              </button>
+            }
+          </div>
+          <div class="config-modal-actions">
+            <button type="button" class="config-modal-btn config-modal-cancel" (click)="closeRootDirModal()">Cancel</button>
+            <button type="button" class="config-modal-btn config-modal-continue" (click)="closeRootDirModal()">Continue</button>
+          </div>
         </div>
       }
     </div>
@@ -300,6 +426,92 @@
             </div>
           }
         </div>
+        <div class="config-collapse">
+          <button type="button" class="config-collapse-btn" (click)="buildExpanded = !buildExpanded">
+            <ng-icon [name]="buildExpanded ? 'lucideChevronDown' : 'lucideChevronRight'" class="config-collapse-icon" />
+            Build and Output Settings
+          </button>
+          @if (buildExpanded) {
+            <div class="config-collapse-content config-build-settings">
+              <div class="config-build-field">
+                <label class="config-build-label">
+                  Build Command
+                  <ng-icon name="lucideInfo" class="config-info-icon" />
+                </label>
+                <div class="config-build-input-row">
+                  <input type="text" class="config-input" [(ngModel)]="buildCommand" placeholder="'npm run vercel-build' or 'npm run build'" />
+                  <label class="config-toggle">
+                    <input type="checkbox" [(ngModel)]="useDefaultBuild" />
+                    <span class="config-toggle-slider"></span>
+                  </label>
+                </div>
+              </div>
+              <div class="config-build-field">
+                <label class="config-build-label">
+                  Output Directory
+                  <ng-icon name="lucideInfo" class="config-info-icon" />
+                </label>
+                <div class="config-build-input-row">
+                  <input type="text" class="config-input" [(ngModel)]="outputDirectory" placeholder="'public' if it exists, or '.'" />
+                  <label class="config-toggle">
+                    <input type="checkbox" [(ngModel)]="useDefaultOutput" />
+                    <span class="config-toggle-slider"></span>
+                  </label>
+                </div>
+              </div>
+              <div class="config-build-field">
+                <label class="config-build-label">
+                  Install Command
+                  <ng-icon name="lucideInfo" class="config-info-icon" />
+                </label>
+                <div class="config-build-input-row">
+                  <input type="text" class="config-input" [(ngModel)]="installCommand" placeholder="'yarn install', 'pnpm install', 'npm install', or 'bun install'" />
+                  <label class="config-toggle">
+                    <input type="checkbox" [(ngModel)]="useDefaultInstall" />
+                    <span class="config-toggle-slider"></span>
+                  </label>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+        <div class="config-collapse">
+          <button type="button" class="config-collapse-btn" (click)="envExpanded = !envExpanded">
+            <ng-icon [name]="envExpanded ? 'lucideChevronDown' : 'lucideChevronRight'" class="config-collapse-icon" />
+            Environment Variables
+          </button>
+          @if (envExpanded) {
+            <div class="config-collapse-content config-env-vars">
+              <div class="config-env-table">
+                <div class="config-env-header">
+                  <span class="config-env-col-key">Key</span>
+                  <span class="config-env-col-value">
+                    Value
+                    <ng-icon name="lucideInfo" class="config-info-icon" />
+                  </span>
+                </div>
+                @for (ev of envVars; track $index) {
+                  <div class="config-env-row">
+                    <input type="text" class="config-input config-env-input" [(ngModel)]="ev.key" placeholder="Key" />
+                    <input type="text" class="config-input config-env-input" [(ngModel)]="ev.value" placeholder="Value" />
+                    <button type="button" class="config-env-remove" (click)="removeEnvVar($index)" aria-label="Remove">
+                      <ng-icon name="lucideMinus" class="config-env-remove-icon" />
+                    </button>
+                  </div>
+                }
+              </div>
+              <button type="button" class="config-env-add" (click)="addEnvVar()">
+                <ng-icon name="lucidePlus" class="config-env-add-icon" />
+                Add More
+              </button>
+              <button type="button" class="config-env-import">
+                <ng-icon name="lucideFileText" class="config-env-import-icon" />
+                Import .env
+              </button>
+              <p class="config-env-hint">or paste the .env contents above. <a href="#" class="config-env-link">Learn more</a></p>
+            </div>
+          }
+        </div>
       </div>
       <button type="button" class="config-submit-btn" (click)="deployFromTemplate()" [disabled]="deploymentStage() !== 'idle'">Create</button>
       <section class="config-deployment">
@@ -320,7 +532,7 @@
           }
           @case ('preparing') {
             @if (deployCtx(); as c) {
-              <p class="config-deploy-status">Preparing Git Repository...</p>
+              <p class="config-deploy-status">Preparing Git Repository... @if (deployStartedAtStr()) { (started {{ deployStartedAtStr() }}) }</p>
               <div class="config-deploy-clone-diagram">
                 <div class="config-deploy-clone-folder">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -340,7 +552,7 @@
           @case ('deploying') {
             <p class="config-deploy-status config-deploy-status-spinner">
               <span class="config-deploy-spinner"></span>
-              Deployment started {{ elapsedSeconds() }}s ago...
+              Started at {{ deployStartedAtStr() }} · {{ elapsedSeconds() }}s elapsed
             </p>
             <div class="config-deploy-sections">
               <div class="config-deploy-section">
@@ -364,9 +576,12 @@
                     </div>
                     <div class="config-deploy-logs-body">
                       @for (line of getBuildLogs(); track $index) {
+                        @let parsed = parseLogLine(line);
                         <div class="config-deploy-log-line">
-                          <span class="config-deploy-log-time">16:53:0{{ $index }}.{{ 800 + $index * 100 }}</span>
-                          <span class="config-deploy-log-text">{{ line }}</span>
+                          @if (parsed.time) {
+                            <span class="config-deploy-log-time">{{ parsed.time }}</span>
+                          }
+                          <span class="config-deploy-log-text">{{ parsed.text }}</span>
                         </div>
                       }
                     </div>
@@ -394,6 +609,7 @@
             <div class="config-deploy-success">
               <h2 class="config-deploy-success-title">Congratulations!</h2>
               <p class="config-deploy-success-subtitle">You just deployed a new project to 🌎 {{ teamLabel() }}.</p>
+              <p class="config-deploy-timestamps">Started {{ deployStartedAtStr() }} · Ended {{ deployEndedAtStr() }} · Duration {{ elapsedSeconds() }}s</p>
               @if (deployCtx()?.previewImage) {
                 <div class="config-deploy-success-card">
                   <div class="config-deploy-success-card-preview">
@@ -433,11 +649,32 @@
               <button type="button" class="config-deploy-continue-btn" (click)="continueToDashboard()">Continue to Dashboard</button>
             </div>
           }
+          @case ('failed') {
+            <div class="config-deploy-failed">
+              <h2 class="config-deploy-failed-title">Deployment Failed</h2>
+              @if (deployStartedAtStr()) {
+                <p class="config-deploy-timestamps">Started {{ deployStartedAtStr() }} · Ended {{ deployEndedAtStr() }} · Duration {{ elapsedSeconds() }}s</p>
+              }
+              <p class="config-deploy-failed-message">{{ deploymentError() }}</p>
+              <div class="config-deploy-failed-actions">
+                <button type="button" class="config-deploy-retry-btn" (click)="resetDeployment()">Try Again</button>
+                @if (isAuthError()) {
+                  <a routerLink="/login" class="config-deploy-login-link">Log in again</a>
+                }
+              </div>
+            </div>
+          }
         }
       </section>
       @if (deploymentStage() === 'idle') {
         <div class="config-footer-links">
           <button type="button" class="config-footer-link" (click)="clearSelection()">Import a different Git Repository →</button>
+          <a routerLink="/dashboard/templates" class="config-footer-link">Browse Templates →</a>
+        </div>
+      }
+      @if (deploymentStage() === 'failed') {
+        <div class="config-footer-links">
+          <button type="button" class="config-footer-link" (click)="resetDeployment()">Try Again</button>
           <a routerLink="/dashboard/templates" class="config-footer-link">Browse Templates →</a>
         </div>
       }

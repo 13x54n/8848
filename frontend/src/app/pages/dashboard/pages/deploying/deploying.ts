@@ -20,16 +20,7 @@ import { AuthService } from '../../../../services/auth.service';
 
 type DeployStage = 'preparing' | 'deploying' | 'success';
 
-const BUILD_LOGS = [
-  'Running build in Washington, D.C., USA (East) - iad1',
-  'Build machine configuration: 2 cores, 8 GB',
-  'Cloning github.com/{repo} (Branch: main)',
-  'Previous build caches not available.',
-  'Cloning completed: 325.000ms',
-  'Running "vercel build"',
-  'Vercel CLI 50.32.4',
-  'Installing dependencies ...',
-];
+const WAITING_LOGS = ['Waiting for build logs...'];
 
 @Component({
   selector: 'app-dashboard-deploying',
@@ -98,9 +89,7 @@ export class DashboardDeployingComponent implements OnInit, OnDestroy {
   }
 
   protected getBuildLogs(): string[] {
-    const ctx = this.ctx();
-    const repo = ctx?.source === 'template' ? '13x54n/' + (ctx?.projectName ?? 'nextjs-boilerplate') : ctx?.sourceRepo ?? 'user/repo';
-    return BUILD_LOGS.map((line) => line.replace('{repo}', repo));
+    return WAITING_LOGS;
   }
 
   protected continueToDashboard(): void {

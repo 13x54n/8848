@@ -928,6 +928,332 @@
   border-top: 1px solid var(--dashboard-input-bg);
 }
 
+/* Build and Output Settings */
+.config-build-settings {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.config-build-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.config-build-label {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--dashboard-fg);
+}
+
+.config-info-icon {
+  width: 0.875rem;
+  height: 0.875rem;
+  color: var(--dashboard-muted-faint);
+}
+
+.config-build-input-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.config-build-input-row .config-input {
+  flex: 1;
+}
+
+/* Environment Variables */
+.config-env-vars {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.config-env-table {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.config-env-header {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 0.5rem;
+  align-items: center;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--dashboard-muted-faint);
+}
+
+.config-env-col-value {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+.config-env-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.config-env-input {
+  min-width: 0;
+}
+
+.config-env-remove {
+  padding: 0.5rem;
+  background: transparent;
+  border: none;
+  color: var(--dashboard-muted-faint);
+  cursor: pointer;
+  border-radius: 0.25rem;
+  transition: color 0.2s, background 0.2s;
+}
+
+.config-env-remove:hover {
+  background: var(--dashboard-surface-hover);
+  color: var(--dashboard-fg);
+}
+
+.config-env-remove-icon {
+  width: 1rem;
+  height: 1rem;
+}
+
+.config-env-add {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0;
+  font-size: 0.8125rem;
+  color: var(--accent);
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.config-env-add:hover {
+  opacity: 0.9;
+}
+
+.config-env-add-icon {
+  width: 1rem;
+  height: 1rem;
+}
+
+.config-env-import {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.8125rem;
+  color: var(--dashboard-fg);
+  background: var(--dashboard-input-bg);
+  border: 1px solid var(--dashboard-border-strong);
+  border-radius: 0.375rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.config-env-import:hover {
+  background: var(--dashboard-surface-hover);
+}
+
+.config-env-import-icon {
+  width: 1rem;
+  height: 1rem;
+}
+
+.config-env-hint {
+  font-size: 0.75rem;
+  color: var(--dashboard-muted-faint);
+  margin: 0;
+}
+
+.config-env-link {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.config-env-link:hover {
+  text-decoration: underline;
+}
+
+/* Root Directory Modal */
+.config-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 100;
+}
+
+.config-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 101;
+  width: 90%;
+  max-width: 420px;
+  padding: 1.5rem;
+  background: var(--dashboard-modal-bg);
+  border: 1px solid var(--dashboard-modal-border);
+  border-radius: 0.5rem;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+}
+
+.config-modal-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin: 0 0 0.5rem;
+  color: var(--dashboard-fg);
+}
+
+.config-modal-desc {
+  font-size: 0.8125rem;
+  color: var(--dashboard-muted-faint);
+  margin: 0 0 1.25rem;
+  line-height: 1.5;
+}
+
+.config-root-dir-tree {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-bottom: 1.25rem;
+  padding: 0.75rem;
+  background: var(--dashboard-surface);
+  border: 1px solid var(--dashboard-border-strong);
+  border-radius: 0.375rem;
+}
+
+.config-root-dir-repo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--dashboard-fg);
+}
+
+.config-root-dir-repo-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.config-root-dir-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  color: var(--dashboard-fg);
+  background: transparent;
+  border: none;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+  transition: background 0.2s;
+}
+
+.config-root-dir-item:hover {
+  background: var(--dashboard-surface-hover);
+}
+
+.config-root-dir-item.selected {
+  background: var(--dashboard-surface-strong);
+}
+
+.config-root-dir-radio {
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid var(--dashboard-border-strong);
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.config-root-dir-item .config-root-dir-radio.checked {
+  border-color: var(--accent);
+  background: var(--accent);
+  box-shadow: inset 0 0 0 2px var(--dashboard-modal-bg);
+}
+
+.config-root-dir-chevron {
+  width: 1rem;
+  height: 1rem;
+  color: var(--dashboard-muted-faint);
+  flex-shrink: 0;
+}
+
+.config-root-dir-label {
+  flex: 1;
+}
+
+.config-root-dir-warn {
+  width: 1rem;
+  height: 1rem;
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+.config-root-dir-alert {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.25rem;
+  height: 1.25rem;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: #fff;
+  background: #ef4444;
+  border-radius: 0.25rem;
+  flex-shrink: 0;
+}
+
+.config-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+
+.config-modal-btn {
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.config-modal-cancel {
+  background: transparent;
+  color: var(--dashboard-nav-fg);
+  border: 1px solid var(--dashboard-border-strong);
+}
+
+.config-modal-cancel:hover {
+  background: var(--dashboard-surface-hover);
+}
+
+.config-modal-continue {
+  background: var(--dashboard-btn-primary-bg);
+  color: var(--dashboard-btn-primary-fg);
+  border: none;
+}
+
+.config-modal-continue:hover {
+  opacity: 0.9;
+}
+
 .config-submit-btn {
   display: block;
   width: 100%;
@@ -1260,6 +1586,12 @@
   margin: 0 0 1.5rem;
 }
 
+.config-deploy-timestamps {
+  font-size: 0.8125rem;
+  color: var(--dashboard-muted-faint);
+  margin: 0 0 1rem;
+}
+
 .config-deploy-success-card {
   background: var(--dashboard-surface-strong);
   border: 1px solid var(--dashboard-border-strong);
@@ -1376,5 +1708,61 @@
 }
 
 .config-deploy-continue-btn:hover {
+  opacity: 0.9;
+}
+
+/* Failed state */
+.config-deploy-failed {
+  padding: 1.5rem 0;
+}
+
+.config-deploy-failed-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0 0 0.5rem;
+  color: #ef4444;
+}
+
+.config-deploy-failed .config-deploy-timestamps {
+  margin-bottom: 0.5rem;
+}
+
+.config-deploy-failed-message {
+  font-size: 0.875rem;
+  color: var(--dashboard-muted-faint);
+  margin: 0 0 1rem;
+}
+
+.config-deploy-failed-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.config-deploy-login-link {
+  font-size: 0.875rem;
+  color: var(--dashboard-accent);
+  text-decoration: none;
+}
+
+.config-deploy-login-link:hover {
+  text-decoration: underline;
+  line-height: 1.5;
+}
+
+.config-deploy-retry-btn {
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  background: var(--dashboard-btn-primary-bg);
+  color: var(--dashboard-btn-primary-fg);
+  border: none;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.config-deploy-retry-btn:hover {
   opacity: 0.9;
 }
